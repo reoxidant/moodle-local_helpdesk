@@ -29,21 +29,74 @@ if (!defined('MOODLE_INTERNAL')) {
 
 $action = helpdesk_categories_param_action();
 
-echo '<form id="categoryeditform" action="index.php" method="post">
+?>
+    <form id="categoryeditform" action="index.php" method="post">
         <div>
             <table style="padding: 6px" class="generaltable generalbox categorymanagementtable boxaligncenter">
                 <tr>
                     <td>
                         <p>
                             <label for="categories">
-                                <span id="categorieslabel">' . get_string('categories', 'local_helpdesk') . '</span>
+                                <span id="categorieslabel">
+                                    <?= get_string('categories', 'local_helpdesk') ?>
+                                </span>
                                 <span id="thecategorizing">&nbsp;</span>
                             </label>
                         </p>
-                        <select name="categories[]" multiple="multiple" id="categories" size="15" class="select" onchange="M.core_group.membersCombo.refreshMembers()"></select>
+                        <select name="categories[]" multiple="multiple" id="categories" size="15"
+                                class="form-control input-block-level"
+                                onchange="M.core_group.membersCombo.refreshMembers()">
+
+                            <?php
+
+                            $categories = [];
+
+                            if ($categories) {
+                                //    foreach ($categories as $category) {
+                                //        echo '<option value="" title="">' . $category . '</option>';
+                                //    }
+                                echo '<option>empty option</option>\n';
+                            } else {
+                                echo '<option>&nbsp;</option>';
+                            }
+
+                            ?>
+
+                        </select>
+                        <p>
+                            <input type="submit" name="action_updatemembers" id="updatemembers"
+                                   value="<?= get_string('showmembersforcategory', 'local_helpdesk')?>
+                            ">
+                        </p>
+                        <p>
+                            <input type="submit" name="action_showcategorysettingsform" id="showeditcategorysettingsform"
+                                   value="<?=get_string('editcategorysettings', 'local_helpdesk')?>"
+                            >
+                        </p>
+                        <p>
+                            <input type="submit" name="action_deletecategory" id="deletecategory"
+                                   value="<?=get_string('deleteselectedcategory', 'local_helpdesk')?>"
+                            >
+                        </p>
+                        <p>
+                            <input type="submit" name="action_showcreateorphancategoryform" id="showcreateorphancategoryform"
+                                   value="<?=get_string('createcategory', 'local_helpdesk')?>"
+                            >
+                        </p>
+                        <p>
+                            <input type="submit" name="action_showautocreatecategoriesform" id="showautocreatecategoriesform"
+                                   value="<?=get_string('autocreatecategories','local_helpdesk')?>"
+                            >
+                        </p>
+                        <p>
+                            <input type="submit" name="action_showimportcategories" id="action_showimportcategories"
+                                   value="<?=get_string('importcategories', 'local')?>"
+                            >
+                        </p>
                     </td>
                 </tr>
             </table>
         </div>
-      </form>';
+    </form>
+
 
