@@ -53,6 +53,10 @@ $string['managecategories'] = 'Управление категориями';
 $string['addcategory'] = 'Добавить категорию';
 $string['assignmanagers'] = 'Назначить менеджера';
 $string['addmanagers'] = 'Добавить менеджера';
+$string['showmembersforcategory'] = 'Показать пользователей категории';
+$string['editcategorysettings'] = 'Редактировать настройки категории';
+$string['createcategory'] = 'Создать категорию';
+$string['autocreatecategories'] = 'Автоматическое создание категорий';
 
 $string['errorcannotwritecomment'] = 'Ошибка записи комментария';
 $string['errornoaccessissue'] = 'У Вас нет доступа для просмотра этой заявки';
