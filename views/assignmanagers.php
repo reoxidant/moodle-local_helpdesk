@@ -50,6 +50,7 @@ $action = helpdesk_categories_param_action();
                             <?php
 
                             $categories = [];
+                            $selectedname = "&nbsp;";
 
                             if ($categories) {
                                 //    foreach ($categories as $category) {
@@ -90,11 +91,18 @@ $action = helpdesk_categories_param_action();
                         </p>
                         <p>
                             <input type="submit" name="action_showimportcategories" id="action_showimportcategories"
-                                   value="<?=get_string('importcategories', 'local')?>"
+                                   value="<?=get_string('importcategories', 'local_helpdesk')?>"
                             >
                         </p>
                     </td>
                 </tr>
+                <p>
+                    <label for="members">
+                        <span id="memberslabel" value="<?=get_string('membersofselectedcategory', 'local_helpdesk')?>"</span>
+                        <span id="thecategory"><?=$selectedname?></span>
+                    </label>
+                </p>
+                <select name="user" id="members" size="15" class="select" onclick="window.status=this.options[this.selectedIndex].title;" onmouseout="window.status=''"></select>
             </table>
         </div>
     </form>
