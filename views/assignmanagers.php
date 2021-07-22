@@ -29,82 +29,124 @@ if (!defined('MOODLE_INTERNAL')) {
 
 $action = helpdesk_categories_param_action();
 
+$returnurl = $CFG -> diroot . '/local/helpdesk/views/assignmanagers.php';
+
+switch ($action) {
+    case 'ajax_getmembersincategory':
+    case 'showcategorysettingsform':
+    case 'showaddmembersform':
+    case 'updatemembers':
+        print_error('errorselectone', 'local_helpdesk', $returnurl);
+        break;
+    default:
+        break;
+}
+
+switch ($action) {
+    case false:
+        break;
+    default: // Error.
+        print_error('unknowaction', '', $returnurl);
+        break;
+}
+
 ?>
-    <form id="categoryeditform" action="index.php" method="post">
-        <div>
-            <table style="padding: 6px" class="generaltable generalbox categorymanagementtable boxaligncenter">
-                <tr>
-                    <td>
-                        <p>
-                            <label for="categories">
+<form id="categoryeditform" action="index.php" method="post">
+    <div>
+        <table style="padding: 6px" class="generaltable generalbox categorymanagementtable boxaligncenter">
+            <tr>
+                <td>
+                    <p>
+                        <label for="categories">
                                 <span id="categorieslabel">
                                     <?= get_string('categories', 'local_helpdesk') ?>
                                 </span>
-                                <span id="thecategorizing">&nbsp;</span>
-                            </label>
-                        </p>
-                        <select name="categories[]" multiple="multiple" id="categories" size="15"
-                                class="form-control input-block-level"
-                                onchange="M.core_group.membersCombo.refreshMembers()">
+                            <span id="thecategorizing">&nbsp;</span>
+                        </label>
+                    </p>
+                    <select name="categories[]" multiple="multiple" id="categories" size="15"
+                            class="form-control input-block-level"
+                            onchange="M.core_group.membersCombo.refreshMembers()">
 
-                            <?php
+                        <?php
 
-                            $categories = [];
-                            $selectedname = "&nbsp;";
+                        $categories = [];
+                        $selectedname = '&nbsp;';
 
-                            if ($categories) {
-                                //    foreach ($categories as $category) {
-                                //        echo '<option value="" title="">' . $category . '</option>';
-                                //    }
-                                echo '<option>empty option</option>\n';
-                            } else {
-                                echo '<option>&nbsp;</option>';
-                            }
+                        if ($categories) {
+                            //    foreach ($categories as $category) {
+                            //        echo '<option value="" title="">' . $category . '</option>';
+                            //    }
+                            echo '<option>empty option</option>\n';
+                        } else {
+                            echo '<option>&nbsp;</option>';
+                        }
 
-                            ?>
+                        ?>
 
-                        </select>
-                        <p>
-                            <input type="submit" name="action_updatemembers" id="updatemembers"
-                                   value="<?= get_string('showmembersforcategory', 'local_helpdesk')?>
+                    </select>
+                    <p>
+                        <input type="submit" name="action_updatemembers" id="updatemembers"
+                               value="<?= get_string('showmembersforcategory', 'local_helpdesk') ?>
                             ">
-                        </p>
-                        <p>
-                            <input type="submit" name="action_showcategorysettingsform" id="showeditcategorysettingsform"
-                                   value="<?=get_string('editcategorysettings', 'local_helpdesk')?>"
-                            >
-                        </p>
-                        <p>
-                            <input type="submit" name="action_deletecategory" id="deletecategory"
-                                   value="<?=get_string('deleteselectedcategory', 'local_helpdesk')?>"
-                            >
-                        </p>
-                        <p>
-                            <input type="submit" name="action_showcreateorphancategoryform" id="showcreateorphancategoryform"
-                                   value="<?=get_string('createcategory', 'local_helpdesk')?>"
-                            >
-                        </p>
-                        <p>
-                            <input type="submit" name="action_showautocreatecategoriesform" id="showautocreatecategoriesform"
-                                   value="<?=get_string('autocreatecategories','local_helpdesk')?>"
-                            >
-                        </p>
-                        <p>
-                            <input type="submit" name="action_showimportcategories" id="action_showimportcategories"
-                                   value="<?=get_string('importcategories', 'local_helpdesk')?>"
-                            >
-                        </p>
-                    </td>
-                </tr>
-                <p>
-                    <label for="members">
-                        <span id="memberslabel" value="<?=get_string('membersofselectedcategory', 'local_helpdesk')?>"</span>
-                        <span id="thecategory"><?=$selectedname?></span>
-                    </label>
-                </p>
-                <select name="user" id="members" size="15" class="select" onclick="window.status=this.options[this.selectedIndex].title;" onmouseout="window.status=''"></select>
-            </table>
-        </div>
-    </form>
+                    </p>
+                    <p>
+                        <input type="submit" name="action_showcategorysettingsform"
+                               id="showeditcategorysettingsform"
+                               value="<?= get_string('editcategorysettings', 'local_helpdesk') ?>"
+                        >
+                    </p>
+                    <p>
+                        <input type="submit" name="action_deletecategory" id="deletecategory"
+                               value="<?= get_string('deleteselectedcategory', 'local_helpdesk') ?>"
+                        >
+                    </p>
+                    <p>
+                        <input type="submit" name="action_showcreateorphancategoryform"
+                               id="showcreateorphancategoryform"
+                               value="<?= get_string('createcategory', 'local_helpdesk') ?>"
+                        >
+                    </p>
+                    <p>
+                        <input type="submit" name="action_showautocreatecategoriesform"
+                               id="showautocreatecategoriesform"
+                               value="<?= get_string('autocreatecategories', 'local_helpdesk') ?>"
+                        >
+                    </p>
+                    <p>
+                        <input type="submit" name="action_showimportcategories" id="action_showimportcategories"
+                               value="<?= get_string('importcategories', 'local_helpdesk') ?>"
+                        >
+                    </p>
+                </td>
+            </tr>
+            <p>
+                <label for="members">
+                        <span id="memberslabel"
+                              value="<?= get_string('membersofselectedcategory', 'local_helpdesk') ?>">
+                        </span>
+                    <span id="thecategory"><?= $selectedname ?></span>
+                </label>
+            </p>
+            <select name="user" id="members" size="15" class="select"
+                    onclick="window.status=this.options[this.selectedIndex].title;" onmouseout="window.status=''">
 
+                <?php
+                $member_names = [];
 
+                $atleastonemember = false;
+
+                if (!$atleastonemember) {
+                    echo '<option>&nbsp;</option>';
+                }
+
+                ?>
+            </select>
+            <p>
+                <input type="submit" name="action_showaddmembersform" id="showaddmembersform"
+                       value="<?= get_string('adduserstocategory', 'local_helpdesk') ?>">
+            </p>
+
+        </table>
+    </div>
+</form>
