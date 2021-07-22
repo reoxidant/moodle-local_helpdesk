@@ -437,7 +437,7 @@ function helpdesk_getcategories(): array
  * @return false|mixed
  * @throws moodle_exception
  */
-function helpdesk_categories_param_action(string $prefix = 'act_')
+function helpdesk_categories_param_action(string $prefix = 'action_')
 {
     $action = false;
 
