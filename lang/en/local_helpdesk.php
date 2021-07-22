@@ -57,6 +57,10 @@ $string['showmembersforcategory'] = 'Показать пользователей
 $string['editcategorysettings'] = 'Редактировать настройки категории';
 $string['createcategory'] = 'Создать категорию';
 $string['autocreatecategories'] = 'Автоматическое создание категорий';
+$string['deleteselectedcategory'] = 'Удалить выбраную категорию';
+$string['importcategories'] = 'Импортировать категории';
+$string['membersofselectedcategory'] = 'Участники:';
+$string['adduserstocategory'] = 'Добавить/удалить пользователей';
 
 $string['errorcannotwritecomment'] = 'Ошибка записи комментария';
 $string['errornoaccessissue'] = 'У Вас нет доступа для просмотра этой заявки';
@@ -64,3 +68,4 @@ $string['errorcannotsubmitticket'] = 'Ошибка регистрации нов
 $string['errorrecordissue'] = 'Не удалось создать новую заявку';
 $string['errornoaccessallissues'] = 'У вас нет доступа для просмотра всех заявок.';
 $string['errorfindingaction'] = 'Ошибка: Не могу выполнить действие: {$a}';
+$string['errorselectone'] = 'Пожалуйста выберите категорию прежде чем выполнить это действие';
