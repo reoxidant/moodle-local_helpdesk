@@ -58,9 +58,9 @@ switch ($action) {
                 <td>
                     <p>
                         <label for="categories">
-                                <span id="categorieslabel">
-                                    <?= get_string('categories', 'local_helpdesk') ?>
-                                </span>
+                            <span id="categorieslabel">
+                                <?= get_string('categories', 'local_helpdesk') ?>
+                            </span>
                             <span id="thecategorizing">&nbsp;</span>
                         </label>
                     </p>
@@ -69,7 +69,6 @@ switch ($action) {
                             onchange="M.core_group.membersCombo.refreshMembers()">
 
                         <?php
-
                         $categories = [];
                         $selectedname = '&nbsp;';
 
@@ -81,15 +80,9 @@ switch ($action) {
                         } else {
                             echo '<option>&nbsp;</option>';
                         }
-
                         ?>
 
                     </select>
-                    <p>
-                        <input type="submit" name="action_updatemembers" id="updatemembers"
-                               value="<?= get_string('showmembersforcategory', 'local_helpdesk') ?>
-                            ">
-                    </p>
                     <p>
                         <input type="submit" name="action_showcategorysettingsform"
                                id="showeditcategorysettingsform"
@@ -107,46 +100,37 @@ switch ($action) {
                                value="<?= get_string('createcategory', 'local_helpdesk') ?>"
                         >
                     </p>
+                </td>
+                <td>
                     <p>
-                        <input type="submit" name="action_showautocreatecategoriesform"
-                               id="showautocreatecategoriesform"
-                               value="<?= get_string('autocreatecategories', 'local_helpdesk') ?>"
-                        >
+                        <label for="members">
+                            <span id="memberslabel">
+                                <?= get_string('membersofselectedcategory', 'local_helpdesk') ?>
+                            </span>
+                            <span id="thecategory"><?= $selectedname ?></span>
+                        </label>
                     </p>
+                    <select name="user" id="members" size="15" class="select"
+                            onclick="window.status=this.options[this.selectedIndex].title;"
+                            onmouseout="window.status=''">
+
+                        <?php
+                        $member_names = [];
+
+                        $atleastonemember = false;
+
+                        if (!$atleastonemember) {
+                            echo '<option>&nbsp;</option>';
+                        }
+
+                        ?>
+                    </select>
                     <p>
-                        <input type="submit" name="action_showimportcategories" id="action_showimportcategories"
-                               value="<?= get_string('importcategories', 'local_helpdesk') ?>"
-                        >
+                        <input type="submit" name="action_showaddmembersform" id="showaddmembersform"
+                               value="<?= get_string('adduserstocategory', 'local_helpdesk') ?>">
                     </p>
                 </td>
             </tr>
-            <p>
-                <label for="members">
-                        <span id="memberslabel"
-                              value="<?= get_string('membersofselectedcategory', 'local_helpdesk') ?>">
-                        </span>
-                    <span id="thecategory"><?= $selectedname ?></span>
-                </label>
-            </p>
-            <select name="user" id="members" size="15" class="select"
-                    onclick="window.status=this.options[this.selectedIndex].title;" onmouseout="window.status=''">
-
-                <?php
-                $member_names = [];
-
-                $atleastonemember = false;
-
-                if (!$atleastonemember) {
-                    echo '<option>&nbsp;</option>';
-                }
-
-                ?>
-            </select>
-            <p>
-                <input type="submit" name="action_showaddmembersform" id="showaddmembersform"
-                       value="<?= get_string('adduserstocategory', 'local_helpdesk') ?>">
-            </p>
-
         </table>
     </div>
 </form>
