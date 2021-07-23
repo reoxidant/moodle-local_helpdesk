@@ -53,14 +53,11 @@ $string['managecategories'] = 'Управление категориями';
 $string['addcategory'] = 'Добавить категорию';
 $string['assignmanagers'] = 'Назначить менеджера';
 $string['addmanagers'] = 'Добавить менеджера';
-$string['showmembersforcategory'] = 'Показать пользователей категории';
 $string['editcategorysettings'] = 'Редактировать настройки категории';
 $string['createcategory'] = 'Создать категорию';
-$string['autocreatecategories'] = 'Автоматическое создание категорий';
 $string['deleteselectedcategory'] = 'Удалить выбраную категорию';
-$string['importcategories'] = 'Импортировать категории';
-$string['membersofselectedcategory'] = 'Участники:';
-$string['adduserstocategory'] = 'Добавить/удалить пользователей';
+$string['membersofselectedcategory'] = 'Участники выбранной группы:';
+$string['adduserstocategory'] = 'Добавить/удалить участников';
 
 $string['errorcannotwritecomment'] = 'Ошибка записи комментария';
 $string['errornoaccessissue'] = 'У Вас нет доступа для просмотра этой заявки';
