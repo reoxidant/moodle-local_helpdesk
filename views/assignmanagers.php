@@ -59,14 +59,14 @@ switch ($action) {
                     <p>
                         <label for="categories">
                             <span id="categorieslabel">
-                                <?= get_string('categories', 'local_helpdesk') ?>
+                                <?= get_string('categories', 'local_helpdesk') ?>:
                             </span>
                             <span id="thecategorizing">&nbsp;</span>
                         </label>
                     </p>
                     <select name="categories[]" multiple="multiple" id="categories" size="15"
-                            class="form-control input-block-level"
-                            onchange="M.core_group.membersCombo.refreshMembers()">
+                            class="select"
+                            onchange="refreshMembers()">
 
                         <?php
                         $categories = [];
@@ -105,7 +105,7 @@ switch ($action) {
                     <p>
                         <label for="members">
                             <span id="memberslabel">
-                                <?= get_string('membersofselectedcategory', 'local_helpdesk') ?>
+                                <?= get_string('membersofselectedcategory', 'local_helpdesk') ?>:
                             </span>
                             <span id="thecategory"><?= $selectedname ?></span>
                         </label>
@@ -134,3 +134,6 @@ switch ($action) {
         </table>
     </div>
 </form>
+<?php
+
+$PAGE->requires->js_init_call('init_categories', array($CFG->wwwroot));

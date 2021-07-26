@@ -56,7 +56,7 @@ $string['addmanagers'] = 'Добавить менеджера';
 $string['editcategorysettings'] = 'Редактировать настройки категории';
 $string['createcategory'] = 'Создать категорию';
 $string['deleteselectedcategory'] = 'Удалить выбраную категорию';
-$string['membersofselectedcategory'] = 'Участники выбранной группы:';
+$string['membersofselectedcategory'] = 'Участники выбранной группы';
 $string['adduserstocategory'] = 'Добавить/удалить участников';
 
 $string['errorcannotwritecomment'] = 'Ошибка записи комментария';
