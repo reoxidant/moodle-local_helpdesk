@@ -460,3 +460,8 @@ function helpdesk_categories_param_action(string $prefix = 'action_')
     }
     return $action;
 }
+
+function helpdesk_get_all_categories(): array
+{
+    return array();
+}
