@@ -27,113 +27,147 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
 }
 
+$categoryid = optional_param('group', false, PARAM_INT);
+$userid = optional_param('user', false, PARAM_INT);
 $action = helpdesk_categories_param_action();
+
+// Support either single category = parameter, or array categories[]
+
+if ($categoryid) {
+    $categoryids = [$categoryid];
+} else {
+    $categoryids = optional_param_array('categories', [], PARAM_INT);
+}
+
+$singlecategory = (count($categoryids) == 1);
 
 $returnurl = $CFG -> diroot . '/local/helpdesk/views/assignmanagers.php';
 
-switch ($action) {
-    case 'ajax_getmembersincategory':
-    case 'showcategorysettingsform':
-    case 'showaddmembersform':
-    case 'updatemembers':
-        print_error('errorselectone', 'local_helpdesk', $returnurl);
-        break;
-    default:
-        break;
+// Check for multiple / no group errors
+
+if(!$singlecategory){
+    switch ($action) {
+        case 'ajax_getmembersincategory':
+        case 'showcategorysettingsform':
+        case 'showaddmembersform':
+        case 'updatemembers':
+            print_error('errorselectone', 'local_helpdesk', $returnurl);
+            break;
+        default:
+            break;
+    }
 }
 
 switch ($action) {
-    case false:
+    case false: // OK, display form.
         break;
     default: // Error.
         print_error('unknowaction', '', $returnurl);
         break;
 }
 
+$disabled = 'disabled="disabled"';
+
+$onchange = 'helpdesk_categories.membersCategory.refreshMembers()';
+
+// Some buttons are enabled if single category selected.
+
+$showaddmembersform_disabled = $singlecategory ? '' : $disabled;
+$showeditcategorysettingsform_disabled = $singlecategory ? '' : $disabled;
+$deletecategory_disabled = count($categoryids) > 0 ? '' : $disabled;
+
 ?>
-<form id="categoryeditform" action="index.php" method="post">
-    <div>
-        <table style="padding: 6px" class="generaltable generalbox categorymanagementtable boxaligncenter">
-            <tr>
-                <td>
-                    <p>
-                        <label for="categories">
-                            <span id="categorieslabel">
-                                <?= get_string('categories', 'local_helpdesk') ?>:
-                            </span>
-                            <span id="thecategorizing">&nbsp;</span>
-                        </label>
-                    </p>
-                    <select name="categories[]" multiple="multiple" id="categories" size="15"
-                            class="select"
-                            onchange="refreshMembers()">
+    <form id="categoryeditform" action="index.php" method="post">
+        <div>
+            <table style="padding: 6px" class="generaltable generalbox categorymanagementtable boxaligncenter">
+                <tr>
+                    <td>
+                        <p>
+                            <label for="categories">
+                                <span id="categorieslabel">
+                                    <?= get_string('categories', 'local_helpdesk') ?>:
+                                </span>
+                                <span id="thecategorizing">&nbsp;</span>0
+                            </label>
+                        </p>
+                        <p>
+                            <select name="categories[]" multiple="multiple" id="categories" size="15"
+                                    class="select"
+                                    onchange="<?= $onchange ?>">
 
-                        <?php
-                        $categories = [];
-                        $selectedname = '&nbsp;';
+                                <?php
+                                $categories = helpdesk_get_all_categories();
+                                $selectedname = '&nbsp;';
 
-                        if ($categories) {
-                            //    foreach ($categories as $category) {
-                            //        echo '<option value="" title="">' . $category . '</option>';
-                            //    }
-                            echo '<option>empty option</option>\n';
-                        } else {
-                            echo '<option>&nbsp;</option>';
-                        }
-                        ?>
+                                if ($categories) {
+                                    //    foreach ($categories as $category) {
+                                    //        echo '<option value="" title="">' . $category . '</option>';
+                                    //    }
+                                    echo '<option>empty option</option>\n';
+                                } else {
+                                    echo '<option>&nbsp;</option>';
+                                }
+                                ?>
 
-                    </select>
-                    <p>
-                        <input type="submit" name="action_showcategorysettingsform"
-                               id="showeditcategorysettingsform"
-                               value="<?= get_string('editcategorysettings', 'local_helpdesk') ?>"
-                        >
-                    </p>
-                    <p>
-                        <input type="submit" name="action_deletecategory" id="deletecategory"
-                               value="<?= get_string('deleteselectedcategory', 'local_helpdesk') ?>"
-                        >
-                    </p>
-                    <p>
-                        <input type="submit" name="action_showcreateorphancategoryform"
-                               id="showcreateorphancategoryform"
-                               value="<?= get_string('createcategory', 'local_helpdesk') ?>"
-                        >
-                    </p>
-                </td>
-                <td>
-                    <p>
-                        <label for="members">
+                            </select>
+                        </p>
+                        <p>
+                            <input type="submit" <?= $showeditcategorysettingsform_disabled ?>
+                                   name="action_showcategorysettingsform"
+                                   id="showeditcategorysettingsform" class="btn btn-secondary"
+                                   value="<?= get_string('editcategorysettings', 'local_helpdesk') ?>"
+                            >
+                        </p>
+                        <p>
+                            <input type="submit" <?= $deletecategory_disabled ?>
+                                   name="action_deletecategory" id="deletecategory" class="btn btn-secondary"
+                                   value="<?= get_string('deleteselectedcategory', 'local_helpdesk') ?>"
+                            >
+                        </p>
+                        <p>
+                            <input type="submit" name="action_showcreateorphancategoryform"
+                                   id="showcreateorphancategoryform" class="btn btn-secondary"
+                                   value="<?= get_string('createcategory', 'local_helpdesk') ?>"
+                            >
+                        </p>
+                    </td>
+                    <td>
+                        <p>
+                            <label for="members">
                             <span id="memberslabel">
                                 <?= get_string('membersofselectedcategory', 'local_helpdesk') ?>:
                             </span>
-                            <span id="thecategory"><?= $selectedname ?></span>
-                        </label>
-                    </p>
-                    <select name="user" id="members" size="15" class="select"
-                            onclick="window.status=this.options[this.selectedIndex].title;"
-                            onmouseout="window.status=''">
+                                <span id="thecategory"><?= $selectedname ?></span>
+                            </label>
+                        </p>
+                        <p>
+                            <select name="user" id="members" size="15" class="select"
+                                    onclick="window.status=this.options[this.selectedIndex].title;"
+                                    onmouseout="window.status=''">
 
-                        <?php
-                        $member_names = [];
+                                <?php
+                                $member_names = [];
 
-                        $atleastonemember = false;
+                                $atleastonemember = false;
 
-                        if (!$atleastonemember) {
-                            echo '<option>&nbsp;</option>';
-                        }
+                                if (!$atleastonemember) {
+                                    echo '<option>&nbsp;</option>';
+                                }
 
-                        ?>
-                    </select>
-                    <p>
-                        <input type="submit" name="action_showaddmembersform" id="showaddmembersform"
-                               value="<?= get_string('adduserstocategory', 'local_helpdesk') ?>">
-                    </p>
-                </td>
-            </tr>
-        </table>
-    </div>
-</form>
+                                ?>
+                            </select>
+                        </p>
+                        <p>
+                            <input type="submit" <?= $showaddmembersform_disabled ?> name="action_showaddmembersform" id="showaddmembersform"
+                                   class="btn btn-secondary"
+                                   value="<?= get_string('adduserstocategory', 'local_helpdesk') ?>">
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </form>
 <?php
 
-$PAGE->requires->js_init_call('init_categories', array($CFG->wwwroot));
+$PAGE -> requires -> js_init_code('helpdesk_categories.init', [$CFG -> wwwroot]);
+$PAGE -> requires -> js_init_code('helpdesk_categories.categorylist', []);
