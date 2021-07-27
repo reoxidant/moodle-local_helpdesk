@@ -11,8 +11,10 @@ function togglehistory() {
     }
 }
 
-let init_categories = function (wwwroot) {
-    let membersCombo = new UpdatableMembersCategory(wwwroot)
+const helpdesk_categories = {
+    init: function (wwwroot) {
+        this.membersCategory = new UpdatableMembersCategory(wwwroot)
+    }
 }
 
 /**
@@ -41,7 +43,7 @@ function UpdatableMembersCategory(wwwRoot) {
                         let optgroupEl = document.createElement("optgroup");
                         optgroupEl.setAttribute("label", roles[i].name);
 
-                        for (let j = 0; j < roles.length; j ++ ){
+                        for (let j = 0; j < roles.length; j++) {
                             let optionEl = document.createElement("option");
                             optionEl.setAttribute("value", roles[i].users[j].id);
                             optionEl.title = roles[i].users[j].name;
@@ -92,6 +94,9 @@ UpdatableMembersCategory.prototype.refreshMembers = function () {
             selectEl.removeChild(selectEl.firstChild)
         }
     }
+
+    console.log(singleSelection)
+    console.log(selectionCount)
 
     document.getElementById('showaddmembersform').disabled = !singleSelection;
     document.getElementById('showeditcategorysettingsform').disabled = !singleSelection;
