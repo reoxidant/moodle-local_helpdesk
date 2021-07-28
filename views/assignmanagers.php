@@ -45,7 +45,7 @@ $returnurl = $CFG -> diroot . '/local/helpdesk/views/assignmanagers.php';
 
 // Check for multiple / no group errors
 
-if(!$singlecategory){
+if (!$singlecategory) {
     switch ($action) {
         case 'ajax_getmembersincategory':
         case 'showcategorysettingsform':
@@ -61,6 +61,17 @@ if(!$singlecategory){
 switch ($action) {
     case false: // OK, display form.
         break;
+    case 'deletecategory':
+        if (count($categoryids) == 0) {
+            print_error('errorselectsome', 'local_helpdesk', $returnurl);
+        }
+        $categoryidlist = implode(',', $categoryids);
+        redirect(new moodle_url('/local/helpdesk/views/delete.php', ['categories' => $categoryidlist]));
+        break;
+    case 'showcreateorphancategoryform':
+        redirect(new moodle_url('/local/helpdesk/views/addcategory.php'));
+        break;
+    case 'show':
     default: // Error.
         print_error('unknowaction', '', $returnurl);
         break;
@@ -77,7 +88,7 @@ $showeditcategorysettingsform_disabled = $singlecategory ? '' : $disabled;
 $deletecategory_disabled = count($categoryids) > 0 ? '' : $disabled;
 
 ?>
-    <form id="categoryeditform" action="index.php" method="post">
+    <form id="categoryeditform" action="view.php" method="post">
         <div>
             <table style="padding: 6px" class="generaltable generalbox categorymanagementtable boxaligncenter">
                 <tr>
@@ -150,6 +161,15 @@ $deletecategory_disabled = count($categoryids) > 0 ? '' : $disabled;
 
                                 $atleastonemember = false;
 
+                                if ($singlecategory) {
+                                    $context = context_system ::instance();
+                                    $resolvers = helpdesk_getresolvers($context);
+                                    foreach ($resolvers as $resolver) {
+                                        echo '<option value="' . $resolver -> id . '">' . fullname($resolver, true) . '</option>';
+                                        $atleastonemember = true;
+                                    }
+                                }
+
                                 if (!$atleastonemember) {
                                     echo '<option>&nbsp;</option>';
                                 }
@@ -158,7 +178,8 @@ $deletecategory_disabled = count($categoryids) > 0 ? '' : $disabled;
                             </select>
                         </p>
                         <p>
-                            <input type="submit" <?= $showaddmembersform_disabled ?> name="action_showaddmembersform" id="showaddmembersform"
+                            <input type="submit" <?= $showaddmembersform_disabled ?> name="action_showaddmembersform"
+                                   id="showaddmembersform"
                                    class="btn btn-secondary"
                                    value="<?= get_string('adduserstocategory', 'local_helpdesk') ?>">
                         </p>

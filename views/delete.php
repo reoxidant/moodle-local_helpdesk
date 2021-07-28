@@ -15,10 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * $addmanagers file description here.
+ * ${PLUGINNAME} file description here.
  *
- * @package    $addmanagers
+ * @package    ${PLUGINNAME}
  * @copyright  2021 SysBind Ltd. <service@sysbind.co.il>
  * @auther     vshapovalov
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
