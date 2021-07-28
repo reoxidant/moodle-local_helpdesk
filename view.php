@@ -130,9 +130,6 @@ if ($view === 'view') {
                     print_error('errornoaccessissue', 'local_helpdesk');
                 }
                 break;
-            case 'addmanagers':
-                include($CFG -> dirroot . '/local/helpdesk/views/addmanagers.php');
-                break;
             case 'assignmanagers':
             default:
                 include($CFG -> dirroot . '/local/helpdesk/views/assignmanagers.php');
