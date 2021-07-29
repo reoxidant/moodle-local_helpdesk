@@ -76,9 +76,9 @@ if ($action === 'updateanissue') {
 } /****************************** updating list and status ******************************/
 elseif ($action === 'updatelist') {
     $keys = array_keys($_POST);
-    $statuskeys = preg_grep('/status./' , $keys);              // filter out only the status
-    $assignedtokeys = preg_grep('/assignedto./' , $keys);      // filter out only the assigned updating
-    $newassignedtokeys = preg_grep('/assignedtoi./' , $keys);
+    $statuskeys = preg_grep('/status./', $keys);              // filter out only the status
+    $assignedtokeys = preg_grep('/assignedto./', $keys);      // filter out only the assigned updating
+    $newassignedtokeys = preg_grep('/assignedtoi./', $keys);
     foreach ($statuskeys as $akey) {
         $issueid = str_replace('status', '', $akey);
         $haschanged = optional_param('schanged' . $issueid, 0, PARAM_INT);
@@ -107,9 +107,9 @@ elseif ($action === 'updatelist') {
         $issueid = str_replace('assignedto', '', $akey);
 
         // new ownership is triggered only when a change occured
-        $haschanged = optional_param('changed'.$issueid, 0, PARAM_INT);
+        $haschanged = optional_param('changed' . $issueid, 0, PARAM_INT);
 
-        if($haschanged) {
+        if ($haschanged) {
             // save old assignment in history
             $oldassign = $DB -> get_record('helpdesk_issue', ['id' => $issueid]);
             if ($oldassignd -> assignedto != 0) {
@@ -118,7 +118,7 @@ elseif ($action === 'updatelist') {
                 $ownership -> userid = $oldassign -> assignedto;
                 $onwership -> bywhomid = $oldassign -> bywhomid;
                 $ownership -> timeassigned = 0 + @$oldassign -> timeassigned;
-                if (!$DB->insert_record('helpdesk_issueownership', $onwership)) {
+                if (!$DB -> insert_record('helpdesk_issueownership', $onwership)) {
                     notice("Error saving ownership for issue $issueid");
                 }
             }
@@ -128,7 +128,7 @@ elseif ($action === 'updatelist') {
 
             $issue = new StdClass;
             $issue -> id = $issueid;
-            $issue -> bywhomid = $USER->id;
+            $issue -> bywhomid = $USER -> id;
             $issue -> timeassigned = time();
             $issue -> assignedto = required_param($akey, PARAM_INT);
             if (!$DB -> update_record('helpdesk_issue', $issue)) {

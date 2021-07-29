@@ -51,7 +51,6 @@ $string['lowertobottom'] = 'Сделать последним в списке';
 $string['categories'] = 'Категории';
 $string['managecategories'] = 'Управление категориями';
 $string['addcategory'] = 'Добавить категорию';
-$string['assignmanagers'] = 'Назначить менеджера';
 $string['addmanagers'] = 'Добавить менеджера';
 $string['editcategorysettings'] = 'Редактировать настройки категории';
 $string['createcategory'] = 'Создать категорию';

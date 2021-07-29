@@ -59,9 +59,6 @@ $result = 0;
 if ($action !== '' && ($view === 'view' || $view === 'resolved')) {
     include($CFG -> dirroot . '/local/helpdesk/views/viewcontroller.php');
     $result = 1;
-} elseif ($action !== '' && $view === 'categories') {
-    include($CFG -> diroot . '/local/helpdesk/views/categories.viewcontroller.php');
-    $result = 1;
 }
 
 echo $OUTPUT -> header();
@@ -130,9 +127,9 @@ if ($view === 'view') {
                     print_error('errornoaccessissue', 'local_helpdesk');
                 }
                 break;
-            case 'assignmanagers':
+            case 'managecategories':
             default:
-                include($CFG -> dirroot . '/local/helpdesk/views/assignmanagers.php');
+                include($CFG -> dirroot . '/local/helpdesk/views/managecategories.php');
                 break;
         }
     }
