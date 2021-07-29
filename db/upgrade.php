@@ -98,19 +98,19 @@ function xmldb_local_helpdesk_upgrade($oldversion = 0): bool
         $table = new xmldb_table('helpdesk_issuecomment');
 
         // Adding fields to table helpdesk_issuecomment.
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, null, null, '0');
-        $table->add_field('issueid', XMLDB_TYPE_INTEGER, '10', null, null, null, '0');
-        $table->add_field('comment', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
-        $table->add_field('commentformat', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('datecreated', XMLDB_TYPE_INTEGER, '10', null, null, null, '0');
+        $table -> add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table -> add_field('userid', XMLDB_TYPE_INTEGER, '10', null, null, null, '0');
+        $table -> add_field('issueid', XMLDB_TYPE_INTEGER, '10', null, null, null, '0');
+        $table -> add_field('comment', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table -> add_field('commentformat', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, null);
+        $table -> add_field('datecreated', XMLDB_TYPE_INTEGER, '10', null, null, null, '0');
 
         // Adding keys to table helpdesk_issuecomment.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table -> add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Conditionally launch create table for helpdesk_issuecomment.
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
+        if (!$dbman -> table_exists($table)) {
+            $dbman -> create_table($table);
         }
 
         // Helpdesk savepoint reached.

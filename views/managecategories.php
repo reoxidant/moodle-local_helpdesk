@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * $assignmanagers file description here.
+ * $managecategories file description here.
  *
- * @package    $assignmanagers
+ * @package    $managecategories
  * @copyright  2021 SysBind Ltd. <service@sysbind.co.il>
  * @auther     vshapovalov
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,7 +27,7 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
 }
 
-$categoryid = optional_param('group', false, PARAM_INT);
+$categoryid = optional_param('category', false, PARAM_INT);
 $userid = optional_param('user', false, PARAM_INT);
 $action = helpdesk_categories_param_action();
 
@@ -41,7 +41,7 @@ if ($categoryid) {
 
 $singlecategory = (count($categoryids) == 1);
 
-$returnurl = $CFG -> diroot . '/local/helpdesk/views/assignmanagers.php';
+$returnurl = $CFG -> diroot . '/local/helpdesk/views/managecategories.php';
 
 // Check for multiple / no group errors
 
@@ -69,9 +69,12 @@ switch ($action) {
         redirect(new moodle_url('/local/helpdesk/views/delete.php', ['categories' => $categoryidlist]));
         break;
     case 'showcreateorphancategoryform':
-        redirect(new moodle_url('/local/helpdesk/views/addcategory.php'));
+//        redirect(new moodle_url('/local/helpdesk/view.php', ['view' => 'categories', 'screen' => 'addcategory']));
+        redirect('view.php?view=categories&screen=addcategory');
         break;
-    case 'show':
+    case 'showcategorysettingsform':
+        redirect(new moodle_url('/local/helpdesk/views/addcategory.php', ['id' => $categoryids[0]]));
+        break;
     default: // Error.
         print_error('unknowaction', '', $returnurl);
         break;
@@ -88,7 +91,7 @@ $showeditcategorysettingsform_disabled = $singlecategory ? '' : $disabled;
 $deletecategory_disabled = count($categoryids) > 0 ? '' : $disabled;
 
 ?>
-    <form id="categoryeditform" action="view.php" method="post">
+    <form id="categoryeditform" action="/local/helpdesk/view.php" method="post">
         <div>
             <table style="padding: 6px" class="generaltable generalbox categorymanagementtable boxaligncenter">
                 <tr>
@@ -111,9 +114,6 @@ $deletecategory_disabled = count($categoryids) > 0 ? '' : $disabled;
                                 $selectedname = '&nbsp;';
 
                                 if ($categories) {
-                                    //    foreach ($categories as $category) {
-                                    //        echo '<option value="" title="">' . $category . '</option>';
-                                    //    }
                                     echo '<option>empty option</option>\n';
                                 } else {
                                     echo '<option>&nbsp;</option>';
@@ -154,7 +154,7 @@ $deletecategory_disabled = count($categoryids) > 0 ? '' : $disabled;
                         <p>
                             <select name="user" id="members" size="15" class="select"
                                     onclick="window.status=this.options[this.selectedIndex].title;"
-                                    onmouseout="window.status=''">
+                                    onmouseout="window.status='';">
 
                                 <?php
                                 $member_names = [];
@@ -191,4 +191,4 @@ $deletecategory_disabled = count($categoryids) > 0 ? '' : $disabled;
 <?php
 
 $PAGE -> requires -> js_init_code('helpdesk_categories.init', [$CFG -> wwwroot]);
-$PAGE -> requires -> js_init_code('helpdesk_categories.categorylist', []);
+//$PAGE -> requires -> js_init_code('helpdesk_categories.categorylist', []);

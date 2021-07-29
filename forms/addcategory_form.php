@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG -> libdir . '/formslib.php');
 
@@ -41,11 +42,11 @@ class addcategory_form extends moodleform
         $mform -> addElement('hidden', 'categoryid');
         $mform -> setType('categoryid', PARAM_INT);
 
-        $mform -> addElement('text', 'name', get_string('name'));
+        $mform -> addElement('text', 'name', get_string('name'), 'maxlength="254" size="55"');
         $mform -> setType('name', PARAM_ALPHANUM);
         $mform -> addRule('name', null, 'required', null, 'client');
 
-        $mform -> addElement('textarea', 'description', get_string('description'));
+        $mform -> addElement('textarea', 'description', get_string('description'), ['rows' => 5, 'cols' => 55]);
 
         $this -> add_action_buttons();
     }

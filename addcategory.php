@@ -23,15 +23,33 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require('../../config.php');
+require_once($CFG -> dirroot . '/local/helpdesk/locallib.php');
 require_once($CFG -> dirroot . '/local/helpdesk/forms/addcategory_form.php');
 
+$screen = helpdesk_resolve_screen();
+$view = helpdesk_resolve_view();
+
+$context = context_system ::instance();
+
+require_login();
+require_capability('local/helpdesk:manage', $context);
+
+$pluginname = get_string('pluginname', 'local_helpdesk');
+
 $url = new moodle_url('/local/helpdesk/addcategory.php');
+
+$PAGE -> set_url($url);
+$PAGE -> set_context($context);
+$PAGE -> set_pagelayout('standard');
+$PAGE -> navbar -> add($pluginname);
+$PAGE -> set_title($pluginname);
+$PAGE -> set_heading($pluginname);
 
 $form = new addcategory_form($url);
 
 if ($form -> is_cancelled()) {
-    $params = compact('view', 'screen');
-    redirect(new moodle_url('/local/helpdesk/view.php', $params));
+    redirect(new moodle_url('/local/helpdesk/view.php', compact('view', 'screen')));
 }
 
 $data = $form -> get_data();
@@ -47,9 +65,15 @@ if ($data) {
         $category -> id = $DB -> insert_record('helpdesk_categories', $category);
     }
 
-    $params = compact('view', 'screen');
-    redirect(new moodle_url('/local/helpdesk/view.php'));
+    redirect(new moodle_url('/local/helpdesk/view.php'), compact('view', 'screen'));
 }
 
-$form -> set_data($data);
+echo $OUTPUT-> header();
+
+$view = 'categories';
+$screen = 'addcategory';
+include_once($CFG -> dirroot . '/local/helpdesk/menus.php');
+
 $form -> display();
+
+echo $OUTPUT -> footer();

@@ -71,19 +71,19 @@ switch ($view) {
         if (!preg_match('/tickets|browse/', $screen)) {
             $screen = 'tickets';
         }
-        if(has_capability('local/helpdesk:report', $context)){
+        if (has_capability('local/helpdesk:report', $context)) {
             $rows[1][] = new tabobject('tickets', 'view.php?view=resolved&amp;screen=tickets', get_string('tickets', 'local_helpdesk'));
         }
-        if(has_capability('local/helpdesk:viewallissues', $context)){
+        if (has_capability('local/helpdesk:viewallissues', $context)) {
             $rows[1][] = new tabobject('browse', 'view.php?view=resolved&amp;screen=browse', get_string('browse', 'local_helpdesk'));
         }
         break;
     case 'categories':
-        if (!preg_match('/addcategory|assignmanagers/', $screen)) {
-            $screen = 'assignmanagers';
+        if (!preg_match('/addcategory|managecategories/', $screen)) {
+            $screen = 'managecategories';
         }
         $rows[1][] = new tabobject('addcategory', 'view.php?view=categories&amp;screen=addcategory', get_string('addcategory', 'local_helpdesk'));
-        $rows[1][] = new tabobject('assignmanagers', 'view.php?view=categories&amp;screen=assignmanagers', get_string('assignmanagers', 'local_helpdesk'));
+        $rows[1][] = new tabobject('managecategories', 'view.php?view=categories&amp;screen=managecategories', get_string('managecategories', 'local_helpdesk'));
         break;
     default:
 }
