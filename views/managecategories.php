@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * $assignmanagers file description here.
+ * $managecategories file description here.
  *
- * @package    $assignmanagers
+ * @package    $managecategories
  * @copyright  2021 SysBind Ltd. <service@sysbind.co.il>
  * @auther     vshapovalov
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -41,7 +41,7 @@ if ($categoryid) {
 
 $singlecategory = (count($categoryids) == 1);
 
-$returnurl = $CFG -> diroot . '/local/helpdesk/views/assignmanagers.php';
+$returnurl = $CFG -> diroot . '/local/helpdesk/views/managecategories.php';
 
 // Check for multiple / no group errors
 
@@ -69,7 +69,8 @@ switch ($action) {
         redirect(new moodle_url('/local/helpdesk/views/delete.php', ['categories' => $categoryidlist]));
         break;
     case 'showcreateorphancategoryform':
-        redirect(new moodle_url('/local/helpdesk/views/addcategory.php'));
+//        redirect(new moodle_url('/local/helpdesk/view.php', ['view' => 'categories', 'screen' => 'addcategory']));
+        redirect('view.php?view=categories&screen=addcategory');
         break;
     case 'showcategorysettingsform':
         redirect(new moodle_url('/local/helpdesk/views/addcategory.php', ['id' => $categoryids[0]]));
