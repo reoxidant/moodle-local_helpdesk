@@ -50,22 +50,21 @@ $form = new addcategory_form($url);
 
 if ($form -> is_cancelled()) {
     redirect(new moodle_url('/local/helpdesk/view.php', compact('view', 'screen')));
-}
+} else {
+    $data = $form -> get_data();
+    if ($data) {
+        $category = new StdClass;
+        $category -> name = $data -> name;
+        $category -> description = $data -> description;
+        if ($data -> categoryid) {
+            $category -> id = $data -> categoryid;
+            $DB -> update_record('helpdesk_categories', $category);
+        } else {
+            $category -> id = $DB -> insert_record('helpdesk_categories', $category);
+        }
 
-$data = $form -> get_data();
-
-if ($data) {
-    $category = new StdClass;
-    $category -> name = $data -> name;
-    $category -> description = $data -> description;
-    if ($data -> categoryid) {
-        $category -> id = $data -> categoryid;
-        $DB -> update_record('helpdesk_categories', $category);
-    } else {
-        $category -> id = $DB -> insert_record('helpdesk_categories', $category);
+        redirect(new moodle_url('/local/helpdesk/view.php'), compact('view', 'screen'));
     }
-
-    redirect(new moodle_url('/local/helpdesk/view.php'), compact('view', 'screen'));
 }
 
 echo $OUTPUT-> header();

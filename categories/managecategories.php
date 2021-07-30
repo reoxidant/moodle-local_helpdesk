@@ -27,58 +27,9 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
 }
 
-$categoryid = optional_param('category', false, PARAM_INT);
-$userid = optional_param('user', false, PARAM_INT);
-$action = helpdesk_categories_param_action();
-
-// Support either single category = parameter, or array categories[]
-
-if ($categoryid) {
-    $categoryids = [$categoryid];
-} else {
-    $categoryids = optional_param_array('categories', [], PARAM_INT);
-}
-
-$singlecategory = (count($categoryids) == 1);
-
-$returnurl = $CFG -> diroot . '/local/helpdesk/views/managecategories.php';
+$returnurl = $CFG -> dirroot . '/local/helpdesk/categories/managecategories.php';
 
 // Check for multiple / no group errors
-
-if (!$singlecategory) {
-    switch ($action) {
-        case 'ajax_getmembersincategory':
-        case 'showcategorysettingsform':
-        case 'showaddmembersform':
-        case 'updatemembers':
-            print_error('errorselectone', 'local_helpdesk', $returnurl);
-            break;
-        default:
-            break;
-    }
-}
-
-switch ($action) {
-    case false: // OK, display form.
-        break;
-    case 'deletecategory':
-        if (count($categoryids) == 0) {
-            print_error('errorselectsome', 'local_helpdesk', $returnurl);
-        }
-        $categoryidlist = implode(',', $categoryids);
-        redirect(new moodle_url('/local/helpdesk/views/delete.php', ['categories' => $categoryidlist]));
-        break;
-    case 'showcreateorphancategoryform':
-//        redirect(new moodle_url('/local/helpdesk/view.php', ['view' => 'categories', 'screen' => 'addcategory']));
-        redirect('view.php?view=categories&screen=addcategory');
-        break;
-    case 'showcategorysettingsform':
-        redirect(new moodle_url('/local/helpdesk/views/addcategory.php', ['id' => $categoryids[0]]));
-        break;
-    default: // Error.
-        print_error('unknowaction', '', $returnurl);
-        break;
-}
 
 $disabled = 'disabled="disabled"';
 

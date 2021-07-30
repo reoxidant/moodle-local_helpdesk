@@ -95,7 +95,7 @@ class local_helpdesk_renderer extends plugin_renderer_base
                 if (!preg_match('/addcategory|managecategories/', $screen)) {
                     $screen = 'managecategories';
                 }
-                $rows[1][] = new tabobject('addcategory', 'view.php?view=categories&amp;screen=addcategory', get_string('addcategory', 'local_helpdesk'));
+                $rows[1][] = new tabobject('addcategory', 'addcategory.php', get_string('addcategory', 'local_helpdesk'));
                 $rows[1][] = new tabobject('managecategories', 'view.php?view=categories&amp;screen=managecategories', get_string('managecategories', 'local_helpdesk'));
                 break;
             default:

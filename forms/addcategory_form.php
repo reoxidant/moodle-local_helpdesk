@@ -37,14 +37,16 @@ class addcategory_form extends moodleform
      */
     protected function definition()
     {
+        global $CFG;
+
         $mform = $this -> _form;
 
         $mform -> addElement('hidden', 'categoryid');
         $mform -> setType('categoryid', PARAM_INT);
 
         $mform -> addElement('text', 'name', get_string('name'), 'maxlength="254" size="55"');
-        $mform -> setType('name', PARAM_ALPHANUM);
         $mform -> addRule('name', null, 'required', null, 'client');
+        $mform -> setType('name', PARAM_TEXT);
 
         $mform -> addElement('textarea', 'description', get_string('description'), ['rows' => 5, 'cols' => 55]);
 
@@ -54,10 +56,10 @@ class addcategory_form extends moodleform
     /**
      * @param array $data
      * @param array $files
-     * @return array
+     * @return void
      */
-    public function validation($data, $files): array
+    public function validation($data, $files = null)
     {
-        return parent ::validation($data, $files);
+
     }
 }
