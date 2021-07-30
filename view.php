@@ -42,6 +42,10 @@ if (!isloggedin() || isguestuser()) {
     die;
 }
 
+if ($view === 'categories') {
+    include($CFG -> dirroot . '/local/helpdesk/categories/viewcontroller.php');
+}
+
 $context = context_system ::instance();
 
 $pluginname = get_string('pluginname', 'local_helpdesk');
@@ -119,21 +123,15 @@ if ($view === 'view') {
     }
 } elseif ($view === 'categories') {
     if ($result !== -1) {
-        switch ($screen) {
-            case 'addcategory':
-                if (has_capability('local/helpdesk:manage', $context)) {
-                    include($CFG -> dirroot . '/local/helpdesk/views/addcategory.php');
-                } else {
-                    print_error('errornoaccessissue', 'local_helpdesk');
-                }
-                break;
-            case 'managecategories':
-            default:
-                include($CFG -> dirroot . '/local/helpdesk/views/managecategories.php');
-                break;
+
+        if(!has_capability('local/helpdesk:manage', $context)) {
+            print_error('errornoaccessissue', 'local_helpdesk');
+        }
+
+        if ($screen == 'managecategories') {
+            include($CFG -> dirroot . '/local/helpdesk/categories/managecategories.php');
         }
     }
-
 } else {
     print_error('errorfindingaction', 'local_helpdesk', $action);
 }
