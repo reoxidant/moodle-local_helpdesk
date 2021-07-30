@@ -48,7 +48,7 @@ $rows[0][] = new tabobject('resolved', 'view.php?view=resolved',
 );
 
 if (has_capability('local/helpdesk:manage', $context)) {
-    $rows[0][] = new tabobject('categories', 'view.php?view=categories', get_string('managecategories', 'local_helpdesk'));
+    $rows[0][] = new tabobject('categories', 'view.php?view=categories', get_string('categories', 'local_helpdesk'));
 }
 
 // Render Subtabs
@@ -82,7 +82,7 @@ switch ($view) {
         if (!preg_match('/addcategory|managecategories/', $screen)) {
             $screen = 'managecategories';
         }
-        $rows[1][] = new tabobject('addcategory', 'view.php?view=categories&amp;screen=addcategory', get_string('addcategory', 'local_helpdesk'));
+        $rows[1][] = new tabobject('addcategory', 'addcategory.php', get_string('addcategory', 'local_helpdesk'));
         $rows[1][] = new tabobject('managecategories', 'view.php?view=categories&amp;screen=managecategories', get_string('managecategories', 'local_helpdesk'));
         break;
     default:
