@@ -52,7 +52,7 @@ $deletecategory_disabled = count($categoryids) > 0 ? '' : $disabled;
                                 <span id="categorieslabel">
                                     <?= get_string('categories', 'local_helpdesk') ?>:
                                 </span>
-                                <span id="thecategorizing">&nbsp;</span>0
+                                <span id="thecategorizing">&nbsp;</span>
                             </label>
                         </p>
                         <p>
@@ -65,8 +65,26 @@ $deletecategory_disabled = count($categoryids) > 0 ? '' : $disabled;
                                 $selectedname = '&nbsp;';
 
                                 if ($categories) {
-                                    echo '<option>empty option</option>\n';
+                                    // Print out the HTML
+                                    foreach ($categories as $category) {
+                                        $select = '';
+//                                        $usercount = $DB->count_records('groups_members', [''])
+                                        $usercount = 0;
+                                        $categoryname = format_string($category -> name) . ' (' . $usercount . ')';
+                                        if (in_array($category -> id, $categoryids)) {
+                                            $select = ' selected="selected"';
+                                            if ($singlecategory) {
+                                                // Only keep selected name if there is one group selected
+                                                $selectedname = $categoryname;
+                                            }
+                                        }
+
+                                        echo '<option value="' . $category -> id . '" ' . $select . ' 
+                                        title="' . $categoryname . '" >' . $categoryname . '</option>\n';
+                                    }
+
                                 } else {
+                                    // Print an empty option to avoid the XHTML error of having an empty select element
                                     echo '<option>&nbsp;</option>';
                                 }
                                 ?>
@@ -141,5 +159,5 @@ $deletecategory_disabled = count($categoryids) > 0 ? '' : $disabled;
     </form>
 <?php
 
-$PAGE -> requires -> js_init_code('helpdesk_categories.init', [$CFG -> wwwroot]);
+$PAGE -> requires -> js_init_call('helpdesk_categories.init', [$CFG -> wwwroot]);
 //$PAGE -> requires -> js_init_code('helpdesk_categories.categorylist', []);
