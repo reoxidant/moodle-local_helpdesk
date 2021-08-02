@@ -77,7 +77,7 @@ $issue = file_prepare_standard_editor($issue, 'resolution', $editoroptions, $con
                     <b>Выбор категории:</b>
                 </td>
                 <td style="width:28%">
-                    <?php $categories = helpdesk_getcategories() ?>
+                    <?php $categories = helpdesk_get_all_categories() ?>
                     <label>
                         <select name="categories[]" multiple="multiple" size="5">
                             <?php
