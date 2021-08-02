@@ -128,9 +128,7 @@ if ($view === 'view') {
             print_error('errornoaccessissue', 'local_helpdesk');
         }
 
-        if ($screen == 'managecategories') {
-            include($CFG -> dirroot . '/local/helpdesk/categories/managecategories.php');
-        }
+        include($CFG -> dirroot . '/local/helpdesk/categories/managecategories.php');
     }
 } else {
     print_error('errorfindingaction', 'local_helpdesk', $action);
