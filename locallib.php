@@ -369,11 +369,9 @@ function helpdesk_print_direct_editor($attributes, $values, &$options): string
  * @return stdClass[]
  * @throws dml_exception
  */
-function helpdesk_getcategories(): array
+function helpdesk_get_all_categories(): array
 {
     global $CFG, $DB;
-
-    $sql = '';
 
     /*
     create table issue_category (id int, categoryname text);
@@ -422,15 +420,7 @@ function helpdesk_getcategories(): array
           ic.id';
     */
 
-    if (!empty($sql)) {
-        return $DB -> get_records_sql($sql);
-    }
-    $category = new stdClass;
-    $category -> id = 1;
-    $category -> summary = 'тестовая категория';
-    $category -> selected = true;
-
-    return array($category);
+    return $DB->get_records_sql('SELECT * FROM {helpdesk_categories} ORDER BY id ASC');
 }
 
 /**
@@ -459,9 +449,4 @@ function helpdesk_categories_param_action(string $prefix = 'action_')
         print_error('unknowaction');
     }
     return $action;
-}
-
-function helpdesk_get_all_categories(): array
-{
-    return array();
 }

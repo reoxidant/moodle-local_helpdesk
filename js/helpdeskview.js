@@ -61,6 +61,9 @@ function UpdatableMembersCategory(wwwRoot) {
 
 UpdatableMembersCategory.prototype.refreshMembers = function () {
     let selectEl = document.getElementById('categories');
+
+    console.log("selectEl" + selectEl)
+
     let selectionCount = 0, groupId = 0;
     if (selectEl) {
         for (let i = 0; i < selectEl.options.length; i++) {
@@ -94,9 +97,6 @@ UpdatableMembersCategory.prototype.refreshMembers = function () {
             selectEl.removeChild(selectEl.firstChild)
         }
     }
-
-    console.log(singleSelection)
-    console.log(selectionCount)
 
     document.getElementById('showaddmembersform').disabled = !singleSelection;
     document.getElementById('showeditcategorysettingsform').disabled = !singleSelection;
