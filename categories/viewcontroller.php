@@ -37,6 +37,8 @@ if ($categoryid) {
 
 $singlecategory = (count($categoryids) == 1);
 
+$returnurl = $CFG -> dirroot . '/local/helpdesk/categories/managecategories.php';
+
 if (!$singlecategory) {
     switch ($action) {
         case 'ajax_getmembersincategory':
@@ -53,6 +55,16 @@ if (!$singlecategory) {
 switch ($action) {
     case false: // OK, display form.
         break;
+
+    case 'ajax_getmembersincategory':
+        $roles = [];
+        $categorymembers = helpdesk_get_members_category($categoryids[0]);
+        if ($categorymembers) {
+            foreach ($categorymembers as $member) {
+                console_log($member);
+            }
+        }
+        break;
     case 'deletecategory':
         if (count($categoryids) == 0) {
             print_error('errorselectsome', 'local_helpdesk', $returnurl);
@@ -60,11 +72,8 @@ switch ($action) {
         $categoryidlist = implode(',', $categoryids);
         redirect(new moodle_url('/local/helpdesk/views/delete.php', ['categories' => $categoryidlist]));
         break;
-    case 'showcreateorphancategoryform':
-//        redirect(new moodle_url('/local/helpdesk/view.php', ['view' => 'categories', 'screen' => 'addcategory']));
-        redirect(new moodle_url('/local/helpdesk/addcategory.php'));
-        break;
     case 'showcategorysettingsform':
+    case 'showcreateorphancategoryform':
         redirect(new moodle_url('/local/helpdesk/addcategory.php'));
         break;
     default: // Error.
