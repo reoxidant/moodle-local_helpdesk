@@ -12,7 +12,7 @@ function togglehistory() {
 }
 
 const helpdesk_categories = {
-    init: function (wwwroot) {
+    init: function (Y, wwwroot) {
         this.membersCategory = new UpdatableMembersCategory(wwwroot)
     }
 }
@@ -48,28 +48,33 @@ function UpdatableMembersCategory(wwwRoot) {
                             optionEl.setAttribute("value", roles[i].users[j].id);
                             optionEl.title = roles[i].users[j].name;
                             optionEl.innerHTML = roles[i].users[j].name;
-                            optgroupEl.appendChild(optionEl)
+                            optgroupEl.appendChild(optionEl);
                         }
+                        selectEl.appendChild(optgroupEl);
                     }
                 }
             }
+            // Remove the loader gif image
+            removeLoaderImgs('membersloader', 'memberslabel');
+        },
+
+        failure: function () {
+            removeLoaderImgs('membersloader', 'memberslabel');
         }
     }
-
-
 }
 
 UpdatableMembersCategory.prototype.refreshMembers = function () {
+
+    // Get category selector and check selection type
     let selectEl = document.getElementById('categories');
+    let selectionCount = 0, categoryId = 0;
 
-    console.log("selectEl" + selectEl)
-
-    let selectionCount = 0, groupId = 0;
     if (selectEl) {
         for (let i = 0; i < selectEl.options.length; i++) {
             selectionCount++;
-            if (!groupId) {
-                groupId = selectEl.options[i].value;
+            if (!categoryId) {
+                categoryId = selectEl.options[i].value;
             }
         }
     }
@@ -77,7 +82,7 @@ UpdatableMembersCategory.prototype.refreshMembers = function () {
     let singleSelection = selectionCount === 1;
 
     if (singleSelection) {
-        createLoaderImg('membersloader', 'memberslabel', this.wwwRoot);
+        createLoaderImg('membersloader', 'memberslabel');
     }
 
     // Update the label.
@@ -101,7 +106,20 @@ UpdatableMembersCategory.prototype.refreshMembers = function () {
     document.getElementById('showaddmembersform').disabled = !singleSelection;
     document.getElementById('showeditcategorysettingsform').disabled = !singleSelection;
     document.getElementById('deletecategory').disabled = selectionCount === 0;
-}
+
+    if (singleSelection) {
+
+        let sUrl = this.wwwRoot + "/local/helpdesk/view.php?category="+categoryId+"&action_ajax_getmembersincategory";
+        let self = this;
+        YUI().use('io', function (Y) {
+            Y.io(sUrl, {
+                method: 'GET',
+                context: this,
+                on: self.connectCallback
+            });
+        });
+    }
+};
 
 let createLoaderImg = function (elClass, parentId) {
     let parentEl = document.getElementById(parentId);
@@ -119,7 +137,7 @@ let createLoaderImg = function (elClass, parentId) {
     loadingImg.setAttribute('class', elClass);
     loadingImg.setAttribute('alt', "Loading");
     loadingImg.setAttribute('id', 'loaderImg');
-    parentId.appendChild(loadingImg)
+    parentEl.appendChild(loadingImg)
 
     return true
 }
