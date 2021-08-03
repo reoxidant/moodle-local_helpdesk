@@ -420,7 +420,7 @@ function helpdesk_get_all_categories(): array
           ic.id';
     */
 
-    return $DB->get_records_sql('SELECT * FROM {helpdesk_categories} ORDER BY id ASC');
+    return $DB -> get_records_sql('SELECT * FROM {helpdesk_categories} ORDER BY id ASC');
 }
 
 /**
@@ -430,6 +430,7 @@ function helpdesk_get_all_categories(): array
 function helpdesk_categories_param_action(string $prefix = 'action_')
 {
     $action = false;
+    $form_vars = null;
 
     if ($_POST) {
         $form_vars = $_POST;
@@ -449,4 +450,11 @@ function helpdesk_categories_param_action(string $prefix = 'action_')
         print_error('unknowaction');
     }
     return $action;
+}
+
+function helpdesk_get_members_category($categoryid): array
+{
+    global $DB;
+
+    return array();
 }
