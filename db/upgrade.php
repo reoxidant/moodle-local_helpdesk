@@ -139,5 +139,27 @@ function xmldb_local_helpdesk_upgrade($oldversion = 0): bool
         upgrade_plugin_savepoint(true, 20210730002, 'local', 'helpdesk');
     }
 
+    if ($oldversion < 20210803000) {
+
+        // Define table helpdesk_categories_members to be created.
+        $table = new xmldb_table('helpdesk_categories_members');
+
+        // Adding fields to table helpdesk_categories_members.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('categoryid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table helpdesk_categories_members.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+        // Conditionally launch create table for helpdesk_categories_members.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Helpdesk savepoint reached.
+        upgrade_plugin_savepoint(true, 20210803000, 'local', 'helpdesk');
+    }
+
     return $result;
 }
