@@ -27,13 +27,9 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
 }
 
-$returnurl = $CFG -> dirroot . '/local/helpdesk/categories/managecategories.php';
-
 // Check for multiple / no group errors
 
 $disabled = 'disabled="disabled"';
-
-$onchange = 'helpdesk_categories.membersCategory.refreshMembers()';
 
 // Some buttons are enabled if single category selected.
 
@@ -58,7 +54,7 @@ $deletecategory_disabled = count($categoryids) > 0 ? '' : $disabled;
                         <p>
                             <select name="categories[]" multiple="multiple" id="categories" size="15"
                                     class="select"
-                                    onchange="<?= $onchange ?>">
+                                    onchange="helpdesk_categories.membersCategory.refreshMembers()">
 
                                 <?php
                                 $categories = helpdesk_get_all_categories();
@@ -159,5 +155,5 @@ $deletecategory_disabled = count($categoryids) > 0 ? '' : $disabled;
     </form>
 <?php
 
-$PAGE -> requires -> js_init_call('helpdesk_categories.init', [$CFG -> wwwroot]);
+$PAGE -> requires -> js_init_call('helpdesk_categories.init', [$CFG->wwwroot]);
 //$PAGE -> requires -> js_init_code('helpdesk_categories.categorylist', []);
