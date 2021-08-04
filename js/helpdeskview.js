@@ -14,6 +14,7 @@ function togglehistory() {
 const helpdesk_categories = {
     init: function (Y, wwwroot) {
         this.membersCategory = new UpdatableMembersCategory(wwwroot)
+
     }
 }
 
@@ -43,7 +44,7 @@ function UpdatableMembersCategory(wwwRoot) {
                         let optgroupEl = document.createElement("optgroup");
                         optgroupEl.setAttribute("label", roles[i].name);
 
-                        for (let j = 0; j < roles.length; j++) {
+                        for (let j = 0; j < roles[i].users.length; j++) {
                             let optionEl = document.createElement("option");
                             optionEl.setAttribute("value", roles[i].users[j].id);
                             optionEl.title = roles[i].users[j].name;
@@ -109,7 +110,7 @@ UpdatableMembersCategory.prototype.refreshMembers = function () {
 
     if (singleSelection) {
 
-        let sUrl = this.wwwRoot + "/local/helpdesk/view.php?category="+categoryId+"&action_ajax_getmembersincategory";
+        let sUrl = this.wwwRoot + "/local/helpdesk/view.php?category=" + categoryId + "&action_ajax_getmembersincategory";
         let self = this;
         YUI().use('io', function (Y) {
             Y.io(sUrl, {

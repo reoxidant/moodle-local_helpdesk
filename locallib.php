@@ -456,5 +456,9 @@ function helpdesk_get_members_category($categoryid): array
 {
     global $DB;
 
+//    SELECT gm.*, e.courseid, g.name AS groupname
+//              FROM {groups_members} gm
+//              JOIN {groups} g ON (g.id = gm.groupid)
+
     return array();
 }
