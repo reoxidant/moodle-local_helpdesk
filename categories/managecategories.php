@@ -156,4 +156,3 @@ $deletecategory_disabled = count($categoryids) > 0 ? '' : $disabled;
 <?php
 
 $PAGE -> requires -> js_init_call('helpdesk_categories.init', [$CFG->wwwroot]);
-//$PAGE -> requires -> js_init_code('helpdesk_categories.categorylist', []);
