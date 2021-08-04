@@ -64,7 +64,8 @@ switch ($action) {
                 console_log($member);
             }
         }
-        break;
+        echo json_encode($categorymembers);
+        die;
     case 'deletecategory':
         if (count($categoryids) == 0) {
             print_error('errorselectsome', 'local_helpdesk', $returnurl);
@@ -75,6 +76,9 @@ switch ($action) {
     case 'showcategorysettingsform':
     case 'showcreateorphancategoryform':
         redirect(new moodle_url('/local/helpdesk/addcategory.php'));
+        break;
+    case 'showaddmembersform':
+        redirect(new moodle_url('/local/helpdesk/members.php', ['category' => $categoryids[0]]));
         break;
     default: // Error.
         print_error('unknowaction', '', $returnurl);
