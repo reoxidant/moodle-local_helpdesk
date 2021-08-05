@@ -57,6 +57,9 @@ $string['createcategory'] = 'Создать категорию';
 $string['deleteselectedcategory'] = 'Удалить выбраную категорию';
 $string['membersofselectedcategory'] = 'Участники выбранной группы';
 $string['adduserstocategory'] = 'Добавить/удалить участников';
+$string['backtocategories'] = 'Назад к категориям';
+$string['categorymembers'] = 'Участники категории';
+$string['potentialmembers'] = 'Возможные участники';
 
 $string['errorcannotwritecomment'] = 'Ошибка записи комментария';
 $string['errornoaccessissue'] = 'У Вас нет доступа для просмотра этой заявки';
