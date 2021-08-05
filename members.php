@@ -24,6 +24,7 @@
  */
 
 require('../../config.php');
+require_once($CFG -> dirroot . '/local/helpdesk/locallib.php');
 
 $categoryid = required_param('category', PARAM_INT);
 $cancel = optional_param('cancel', false, PARAM_BOOL);
@@ -40,7 +41,6 @@ $pluginname = get_string('pluginname', 'local_helpdesk');
 
 $url = new moodle_url('/local/helpdesk/addcategory.php');
 
-
 $PAGE -> set_url($url);
 $PAGE -> set_context($context);
 $PAGE -> set_pagelayout('standard');
@@ -53,34 +53,97 @@ $PAGE -> navbar -> add($pluginname);
 $PAGE -> set_title($pluginname);
 $PAGE -> set_heading($pluginname);
 
-echo $OUTPUT->header();
-
-$category = $DB -> get_record('helpdesk_category', ['id' => $categoryid], '*', MUST_EXIST);
-$category = $category -> id;
+$category = $DB -> get_record('helpdesk_categories', ['id' => $categoryid], '*', MUST_EXIST);
 $categoryname = format_string($category -> name);
+$category = $category -> id;
 
 if ($cancel) {
     redirect(new moodle_url('/local/helpdesk/view.php', compact('view', 'screen', 'category')));
 }
 
-?>
+echo $OUTPUT -> header();
+echo $OUTPUT -> heading(get_string('adduserstocategory', 'local_helpdesk') . ": $categoryname", 3);
 
+// need to fix html
+
+?>
 <div id="addmembersform">
-    <form id="assignform" method="post" action="<?= $CFG->wwwroot ?>/local/helpdesk/members.php?category=<?= $categoryid ?>">
+    <form id="assignform" method="post"
+          action="<?= $CFG -> wwwroot ?>/local/helpdesk/members.php?category=<?= $categoryid ?>">
         <div>
             <input type="hidden" name="sesskey" value="<?= p(sesskey()) ?>">
-            <table class="generaltable generalbox categorymanagementtable boxaligncenter">
+            <table class="generaltable generalbox groupmanagementtable boxaligncenter">
                 <tr>
                     <td id="existingcell">
                         <p>
-                            <label for="removeselect"><?php print_string('categorymembers', 'local_helpdesk')?></label>
+                            <label for="removeselect"><?php print_string('categorymembers', 'local_helpdesk') ?></label>
                         </p>
+                        <!-- start display members -->
+                        <div class="userselector" id="removeselect_wrapper">
+                            <select name="removeselect[]" id="removeselect" multiple="multiple" size="20">
+                                <optgroup label="Пусто">
+                                    <option disabled="disabled">&nbsp;</option>
+                                </optgroup>
+                            </select>
+                            <div>
+                                <label for="addselect_searchtext">Найти</label>
+                                <input type="text" name="addselect_searchtext" id="addselect_searchtext" size="15"
+                                       value="">
+                                <input class="btn btn-secondary mx-1" type="button" value="Очистить"
+                                       id="addselect_clearbutton">
+                            </div>
+                        </div>
+                        <!-- end display members -->
+                    </td>
+                    <td id="buttonscell">
 
+                        <p class="arrow_button">
+                            <input
+                                    class="btn btn-secondary"
+                                    name="add" id="add" type="submit"
+                                    value="<?= $OUTPUT -> larrow() . '&nbsp' . get_string('add') ?>"
+                                    title="<?php print_string('add'); ?>"><br>
+                            <input
+                                    class="btn btn-secondary"
+                                    name="remove" id="remove" type="submit"
+                                    value="<?= get_string('remove') . '&nbsp;' . $OUTPUT -> rarrow() ?>"
+                                    title="<?php print_string('remove') ?>">
+                        </p>
+                    </td>
+                    <td id="potentialcell">
+                        <p>
+                            <label for="addselect"><?php print_string('potentialmembers', 'local_helpdesk') ?></label>
+                        </p>
+                        <!-- start display potential membership -->
+                        <div class="userselector" id="addselect_wrapper">
+                            <select name="addselect[]" id="addselect" multiple="multiple" size="20">
+                                <optgroup label="Нет ролей (4)">
+                                    <option value="2">Анна Березина (enfatiko@yandex.ru) (1)</option>
+                                    <option value="5">Анастасия Кобзева (akobzeva@muiv.ru) (0)</option>
+                                    <option value="4">Евгения Мельничук (emelnichuk@muiv.ru) (0)</option>
+                                    <option value="3">Екатерина Степанова (estepanova@muiv.ru) (0)</option>
+                                </optgroup>
+                            </select>
+                            <div>
+                                <label for="addselect_searchtext">Найти</label>
+                                <input type="text" name="addselect_searchtext" id="addselect_searchtext" size="15"
+                                       value="">
+                                <input class="btn btn-secondary mx-1" type="button" value="Очистить"
+                                       id="addselect_clearbutton">
+                            </div>
+                        </div>
+                        <!-- end display potential membership -->
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" id="backcell">
+                        <input class="btn btn-secondary" type="submit" name="cancel"
+                               value="<?php print_string('backtocategories', 'local_helpdesk') ?>">
                     </td>
                 </tr>
             </table>
         </div>
     </form>
 </div>
-
+<?= $OUTPUT -> footer() ?>
 
