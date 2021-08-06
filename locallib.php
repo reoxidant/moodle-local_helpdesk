@@ -462,3 +462,8 @@ function helpdesk_get_members_category($categoryid): array
 
     return array();
 }
+
+function helpdesk_get_all_members(): array
+{
+    return $DB -> get_records_sql( $sql = 'SELECT * FROM {user} ORDER BY lastname ASC');
+}

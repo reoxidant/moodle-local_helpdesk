@@ -81,9 +81,22 @@ echo $OUTPUT -> heading(get_string('adduserstocategory', 'local_helpdesk') . ": 
                         <!-- start display members -->
                         <div class="userselector" id="removeselect_wrapper">
                             <select name="removeselect[]" id="removeselect" multiple="multiple" size="20">
+
+                                <?php
+
+                                $members = helpdesk_get_members_category($categoryid);
+
+                                foreach ($members as $member) {
+                                    console_log($member);
+                                }
+
+                                if (empty($members)){ ?>
+
                                 <optgroup label="Пусто">
                                     <option disabled="disabled">&nbsp;</option>
                                 </optgroup>
+
+                                <?php } ?>
                             </select>
                             <div>
                                 <label for="addselect_searchtext">Найти</label>
@@ -96,13 +109,13 @@ echo $OUTPUT -> heading(get_string('adduserstocategory', 'local_helpdesk') . ": 
                         <!-- end display members -->
                     </td>
                     <td id="buttonscell">
-
                         <p class="arrow_button">
                             <input
                                     class="btn btn-secondary"
                                     name="add" id="add" type="submit"
                                     value="<?= $OUTPUT -> larrow() . '&nbsp' . get_string('add') ?>"
-                                    title="<?php print_string('add'); ?>"><br>
+                                    title="<?php print_string('add'); ?>">
+                            <br>
                             <input
                                     class="btn btn-secondary"
                                     name="remove" id="remove" type="submit"
