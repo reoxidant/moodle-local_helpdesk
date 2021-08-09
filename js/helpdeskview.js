@@ -152,3 +152,50 @@ let removeLoaderImgs = function (elClass, parentId) {
         }
     }
 }
+
+// Updates the current groups information shown about a user when a user is selected.
+
+function updateUserSummary() {
+    let selectEl = document.getElementById('addselect'),
+        summaryDiv = document.getElementById('category-usersummary'),
+        length = selectEl.length,
+        selectCnt = 0,
+        selectIdx = -1,
+        i;
+
+    for (i = 0; i < length; i++){
+        if(selectEl.options[i].selected) {
+            selectCnt++;
+            selectIdx = i;
+        }
+    }
+
+    if(selectCnt === 1 && userSummaries[selectIdx]) {
+        summaryDiv.innerHTML = userSummaries[selectIdx];
+    } else {
+        summaryDiv.innerHTML = '';
+    }
+
+    return true
+}
+
+// MARK: Need to testing
+
+function init_add_remove_members_page(Y) {
+    let add = Y.one('#add');
+    let addselect = M.core_user.get_user_selector('addselect');
+    add.set('disabled', addselect.is_selection_empty());
+    addselect.on('user_selector:selectionchanged', function(isempty) {
+       add.set('disabled', isempty)
+    });
+
+    let remove = Y.one('#remove');
+    let removeselect = M.core_user.get_user_selector('removeselect');
+    remove.set('disabled', removeselect.is_selection_empty());
+    removeselect.on('user_selector:selectionchanged', function(isempty){
+       remove.set('disabled', isempty);
+    });
+
+    addselect = document.getElementById('addselect');
+    addselect.onchange = updateUserSummary;
+}
