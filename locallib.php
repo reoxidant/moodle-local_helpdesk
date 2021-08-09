@@ -197,7 +197,7 @@ function helpdesk_can_edit(&$context, &$issue): bool
 function helpdesk_getresolvers($context): array
 {
     $allnames = get_all_user_name_fields(true, 'u');
-    return get_users_by_capability($context, 'local/helpdesk:resolve', 'u.id,' . $allnames, 'lastname', '', '', '', '', false);
+    return get_users_by_capability($context, 'local/helpdesk:resolve', 'u.id, u.email,' . $allnames, 'lastname', '', '', '', '', false);
 }
 
 /**
@@ -461,9 +461,4 @@ function helpdesk_get_members_category($categoryid): array
 //              JOIN {groups} g ON (g.id = gm.groupid)
 
     return array();
-}
-
-function helpdesk_get_all_members(): array
-{
-    return $DB -> get_records_sql( $sql = 'SELECT * FROM {user} ORDER BY lastname ASC');
 }
