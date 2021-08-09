@@ -84,23 +84,23 @@ echo $OUTPUT -> heading(get_string('adduserstocategory', 'local_helpdesk') . ": 
 
                                 <?php
 
-                                $members = helpdesk_get_members_category($categoryid);
+                                $categorymembers = helpdesk_get_members_category($categoryid);
 
-                                foreach ($members as $member) {
+                                foreach ($categorymembers as $member) {
                                     console_log($member);
                                 }
 
-                                if (empty($members)){ ?>
+                                if (empty($categorymembers)) { ?>
 
-                                <optgroup label="Пусто">
-                                    <option disabled="disabled">&nbsp;</option>
-                                </optgroup>
+                                    <optgroup label="Пусто">
+                                        <option disabled="disabled">&nbsp;</option>
+                                    </optgroup>
 
                                 <?php } ?>
                             </select>
                             <div>
-                                <label for="addselect_searchtext">Найти</label>
-                                <input type="text" name="addselect_searchtext" id="addselect_searchtext" size="15"
+                                <label for="searchtext">Найти</label>
+                                <input type="text" name="addselect_searchtext" id="searchtext" size="15"
                                        value="">
                                 <input class="btn btn-secondary mx-1" type="button" value="Очистить"
                                        id="addselect_clearbutton">
@@ -130,11 +130,14 @@ echo $OUTPUT -> heading(get_string('adduserstocategory', 'local_helpdesk') . ": 
                         <!-- start display potential membership -->
                         <div class="userselector" id="addselect_wrapper">
                             <select name="addselect[]" id="addselect" multiple="multiple" size="20">
-                                <optgroup label="Нет ролей (4)">
-                                    <option value="2">Анна Березина (enfatiko@yandex.ru) (1)</option>
-                                    <option value="5">Анастасия Кобзева (akobzeva@muiv.ru) (0)</option>
-                                    <option value="4">Евгения Мельничук (emelnichuk@muiv.ru) (0)</option>
-                                    <option value="3">Екатерина Степанова (estepanova@muiv.ru) (0)</option>
+                                <?php $allmembers = helpdesk_getresolvers($context); ?>
+                                <optgroup label="Пользователи (<?= count($allmembers) ?>)">
+                                    <?php foreach ($allmembers as $member) { ?>
+                                        <option value="<?= $member -> id ?>">
+                                            <?= $member -> firstname ?><?= $member -> lastname ?>
+                                            (<?= $member -> email ?>)
+                                        </option>
+                                    <?php } ?>
                                 </optgroup>
                             </select>
                             <div>
@@ -142,7 +145,7 @@ echo $OUTPUT -> heading(get_string('adduserstocategory', 'local_helpdesk') . ": 
                                 <input type="text" name="addselect_searchtext" id="addselect_searchtext" size="15"
                                        value="">
                                 <input class="btn btn-secondary mx-1" type="button" value="Очистить"
-                                       id="addselect_clearbutton">
+                                       id="clearbutton">
                             </div>
                         </div>
                         <!-- end display potential membership -->
@@ -158,5 +161,11 @@ echo $OUTPUT -> heading(get_string('adduserstocategory', 'local_helpdesk') . ": 
         </div>
     </form>
 </div>
-<?= $OUTPUT -> footer() ?>
+<?php
+
+//this must be after calling display() on the selectors so their setup JS executes first
+$PAGE->requires->js_init_call('init_add_remove_members_page' );
+
+$OUTPUT -> footer();
+?>
 
