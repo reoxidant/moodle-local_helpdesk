@@ -24,7 +24,10 @@
  */
 
 require('../../config.php');
+require_once($CFG -> dirroot . '/local/helpdesk/lib.php');
 require_once($CFG -> dirroot . '/local/helpdesk/locallib.php');
+
+$PAGE -> requires -> js(new moodle_url('/local/helpdesk/js/helpdeskview.js'), true);
 
 $categoryid = required_param('category', PARAM_INT);
 $cancel = optional_param('cancel', false, PARAM_BOOL);
@@ -44,8 +47,6 @@ $url = new moodle_url('/local/helpdesk/addcategory.php');
 $PAGE -> set_url($url);
 $PAGE -> set_context($context);
 $PAGE -> set_pagelayout('standard');
-
-$PAGE -> requires -> js('/local/helpdesk/js/helpdeskview.js');
 $PAGE -> navbar -> add($pluginname);
 
 // Print header
@@ -134,7 +135,7 @@ echo $OUTPUT -> heading(get_string('adduserstocategory', 'local_helpdesk') . ": 
                                 <optgroup label="Пользователи (<?= count($allmembers) ?>)">
                                     <?php foreach ($allmembers as $member) { ?>
                                         <option value="<?= $member -> id ?>">
-                                            <?= $member -> firstname ?><?= $member -> lastname ?>
+                                            <?= $member -> firstname ?> <?= $member -> lastname ?>
                                             (<?= $member -> email ?>)
                                         </option>
                                     <?php } ?>
@@ -164,8 +165,8 @@ echo $OUTPUT -> heading(get_string('adduserstocategory', 'local_helpdesk') . ": 
 <?php
 
 //this must be after calling display() on the selectors so their setup JS executes first
-$PAGE->requires->js_init_call('init_add_remove_members_page' );
+$PAGE -> requires -> js_init_call('init_add_remove_members_page');
 
-$OUTPUT -> footer();
+echo $OUTPUT -> footer();
 ?>
 

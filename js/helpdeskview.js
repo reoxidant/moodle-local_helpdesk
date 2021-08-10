@@ -153,49 +153,32 @@ let removeLoaderImgs = function (elClass, parentId) {
     }
 }
 
-// Updates the current groups information shown about a user when a user is selected.
-
-function updateUserSummary() {
-    let selectEl = document.getElementById('addselect'),
-        summaryDiv = document.getElementById('category-usersummary'),
-        length = selectEl.length,
-        selectCnt = 0,
-        selectIdx = -1,
-        i;
-
-    for (i = 0; i < length; i++){
+let is_selection_empty = function(selectEl) {
+    let selection = false;
+    for (let i = 0; i < selectEl.options.length; i++) {
         if(selectEl.options[i].selected) {
-            selectCnt++;
-            selectIdx = i;
+            selection = true;
         }
     }
-
-    if(selectCnt === 1 && userSummaries[selectIdx]) {
-        summaryDiv.innerHTML = userSummaries[selectIdx];
-    } else {
-        summaryDiv.innerHTML = '';
-    }
-
-    return true
+    return !(selection);
 }
 
-// MARK: Need to testing
+let init_add_remove_members_page = function() {
+    let add = document.getElementById('add');
+    let addselect = document.getElementById('addselect');
+    add.disabled = is_selection_empty(addselect);
 
-function init_add_remove_members_page(Y) {
-    let add = Y.one('#add');
-    let addselect = M.core_user.get_user_selector('addselect');
-    add.set('disabled', addselect.is_selection_empty());
-    addselect.on('user_selector:selectionchanged', function(isempty) {
-       add.set('disabled', isempty)
-    });
+    addselect.addEventListener('change', function (){
+        add.disabled = false;
+        remove.disabled = true;
+    })
 
-    let remove = Y.one('#remove');
-    let removeselect = M.core_user.get_user_selector('removeselect');
-    remove.set('disabled', removeselect.is_selection_empty());
-    removeselect.on('user_selector:selectionchanged', function(isempty){
-       remove.set('disabled', isempty);
-    });
+    let remove = document.getElementById('remove');
+    let removeselect = document.getElementById('removeselect');
+    remove.disabled = is_selection_empty(removeselect);
 
-    addselect = document.getElementById('addselect');
-    addselect.onchange = updateUserSummary;
+    removeselect.addEventListener('change', function (){
+        add.disabled = true;
+        remove.disabled = false;
+    })
 }
