@@ -272,7 +272,7 @@ if (!empty($issues)) {
     echo '<br />';
 
     echo '<div style = "text-align: center;">';
-    echo '<p ><input type = "submit" name = "go_btn" value = "' . get_string('savechanges') . '" /></p > ';
+    echo '<p><input type = "submit" name = "go_btn" value = "' . get_string('savechanges') . '" /></p> ';
     echo '</div > ';
 } else {
     echo '<br />';
