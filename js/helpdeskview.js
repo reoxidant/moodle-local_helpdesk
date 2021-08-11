@@ -182,3 +182,55 @@ let init_add_remove_members_page = function() {
         remove.disabled = false;
     })
 }
+
+let search_members = function (lastsearch = "") {
+    let querydelay = 0.5;
+    let timeoutid = null;
+    let iotransactions = {};
+    let searchfield = document.getElementById("addselect_searchtext");
+    let clearbutton = document.getElementById("clearbutton");
+
+    let cancel_timeout = function() {
+        if (timeoutid) {
+            clearTimeout(timeoutid);
+            timeoutid = null;
+        }
+    }
+
+    searchfield.addEventListener('keyup', function (e){
+        // Trigger an ajax search after a delay.
+        cancel_timeout()
+        timeoutid = setTimeout(function (){
+
+        }, 1000)
+    })
+
+    let send_query = function(forceresearch) {
+
+        cancel_timeout()
+
+        let value = get_search_text();
+        searchfield.set('class', '');
+        if (lastsearch === value && !forceresearch) {
+            return;
+        }
+
+        // Try to cancel existing transactions.
+        iotransactions.forEach((trans) => {
+           trans.abort();
+        });
+
+        let xhttp = new XMLHttpRequest();
+        xhttp.open('POST', '', true);
+        xhttp.onreadystatechange = function () {
+            if(this.readyState === 4 && this.status === 200){
+                let response = this.responseText
+            }
+        }
+        xhttp.send();
+    }
+
+    let get_search_text = function() {
+        return searchfield.get('value').toString().replace(/^ +| +$/, '');
+    }
+}
