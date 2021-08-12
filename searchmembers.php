@@ -47,10 +47,12 @@ $context = context_system ::instance();
 
 $members = helpdesk_getresolvers($context);
 
-function find_members_ids(){
-
+$ids = [];
+foreach ($members as $member) {
+    $ids += $member->id;
 }
-$ids = array_map('find_members_ids', $members);
+$results = $DB->get_record_sql('SELECT * FROM {user} 
+                                    WHERE id IN (' .implode(',', $ids).") 
+                                    AND CONCAT(firstname, ' ', lastname, ' ', email) LIKE '%$search%')");
 
-$results = $DB->get_record_sql('SELECT * FROM {user} WHERE id IN ('.implode(',', $ids).'))');
-
+echo json_encode(['results' => $results]);
