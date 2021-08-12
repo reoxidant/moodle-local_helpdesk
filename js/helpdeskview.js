@@ -153,22 +153,22 @@ let removeLoaderImgs = function (elClass, parentId) {
     }
 }
 
-let is_selection_empty = function(selectEl) {
+let is_selection_empty = function (selectEl) {
     let selection = false;
     for (let i = 0; i < selectEl.options.length; i++) {
-        if(selectEl.options[i].selected) {
+        if (selectEl.options[i].selected) {
             selection = true;
         }
     }
     return !(selection);
 }
 
-let init_add_remove_members_page = function() {
+let init_add_remove_members_page = function () {
     let add = document.getElementById('add');
     let addselect = document.getElementById('addselect');
     add.disabled = is_selection_empty(addselect);
 
-    addselect.addEventListener('change', function (){
+    addselect.addEventListener('change', function () {
         add.disabled = false;
         remove.disabled = true;
     })
@@ -177,7 +177,7 @@ let init_add_remove_members_page = function() {
     let removeselect = document.getElementById('removeselect');
     remove.disabled = is_selection_empty(removeselect);
 
-    removeselect.addEventListener('change', function (){
+    removeselect.addEventListener('change', function () {
         add.disabled = true;
         remove.disabled = false;
     })
@@ -186,26 +186,32 @@ let init_add_remove_members_page = function() {
 let search_members = function (lastsearch = "") {
     let querydelay = 0.5;
     let timeoutid = null;
-    let iotransactions = {};
     let searchfield = document.getElementById("addselect_searchtext");
     let clearbutton = document.getElementById("clearbutton");
+    let addselect = document.getElementById('addselect');
 
-    let cancel_timeout = function() {
+    let cancel_timeout = function () {
         if (timeoutid) {
             clearTimeout(timeoutid);
             timeoutid = null;
         }
     }
 
-    searchfield.addEventListener('keyup', function (e){
+    searchfield.addEventListener('keyup', function () {
         // Trigger an ajax search after a delay.
         cancel_timeout()
-        timeoutid = setTimeout(function (){
+        timeoutid = setTimeout(function () {
+            send_query(false)
+        }, querydelay * 1000)
+    });
 
-        }, 1000)
-    })
+    clearbutton.addEventListener('click', function (){
+        searchfield.value = "";
+        clearbutton.disabled = true;
+        send_query(false);
+    });
 
-    let send_query = function(forceresearch) {
+    let send_query = function (forceresearch) {
 
         cancel_timeout()
 
@@ -215,22 +221,77 @@ let search_members = function (lastsearch = "") {
             return;
         }
 
-        // Try to cancel existing transactions.
-        iotransactions.forEach((trans) => {
-           trans.abort();
-        });
+        let url = '/local/helpdesk/searchmembers.php'
+        let params = 'search=' + value;
 
         let xhttp = new XMLHttpRequest();
-        xhttp.open('POST', '', true);
+        xhttp.open('POST', url, true);
         xhttp.onreadystatechange = function () {
-            if(this.readyState === 4 && this.status === 200){
-                let response = this.responseText
+            if (xhttp.readyState === 4 && xhttp.status === 200) {
+                let response = xhttp.responseText
+                let data = JSON.parse(response);
+                if (data.error) {
+                    searchfield.addClass('error');
+                }
+                console.log("data - " + data);
+
+                output_options(data);
             }
         }
-        xhttp.send();
+        xhttp.send(params);
+
+        lastsearch = value;
+        addselect.style.backgroundImage = 'url("pix/loading.gif") no-repeat center center'
     }
 
-    let get_search_text = function() {
+    let get_search_text = function () {
         return searchfield.get('value').toString().replace(/^ +| +$/, '');
+    }
+
+    let output_options = function (data) {
+        // Clear out the existing options, keeping any ones that are already selected.
+        let selectedusers = {};
+        let addselect = document.getElementById('addselect');
+
+        for (let i = 0; i < addselect.options.length; i++) {
+
+            let opt = addselect.options[i]
+            opt.remove()
+            if (opt.selected) {
+                selectedusers[opt.value] = {
+                    id: opt.value,
+                    name: opt.innerText || opt.textContent,
+                    disabled: opt.disabled
+                }
+            }
+            opt.options[i].remove();
+        }
+
+        // Output each option
+        for (let key in data.results) {
+            let categorydata = data.result[key];
+            output_category(categorydata.name, categorydata.users);
+        }
+    }
+
+    let output_category = function (users, selectedusers) {
+        let category = document.createElement('optgroup');
+        let count = 0;
+        for (let key in users) {
+            let user = users[key];
+            let option = document.createElement('option');
+            option.value = user.id;
+            option.innerText = user.name;
+            if (user.disabled) {
+                option.disabled = true;
+            } else if (selectedusers === true || selectedusers[user.id]) {
+                option.selected = true;
+                delete selectedusers[user.id];
+            } else {
+                option.selected = false;
+            }
+            category.append(option);
+            count++;
+        }
     }
 }
