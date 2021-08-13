@@ -208,44 +208,42 @@ let search_members = function (lastsearch = "") {
     clearbutton.addEventListener('click', function (){
         searchfield.value = "";
         clearbutton.disabled = true;
-        send_query(false);
+        send_query(false).then(response => console.error(`ERROR: ${response}`));
     });
 
-    let send_query = function (forceresearch) {
+    let send_query = async function (forceresearch) {
 
         cancel_timeout()
 
         let value = get_search_text();
-        searchfield.set('class', '');
+        searchfield.className = ''
         if (lastsearch === value && !forceresearch) {
             return;
         }
 
-        let url = '/local/helpdesk/searchmembers.php'
-        let params = 'search=' + value;
+        let url = '/local/helpdesk/searchmembers.php';
 
-        let xhttp = new XMLHttpRequest();
-        xhttp.open('POST', url, true);
-        xhttp.onreadystatechange = function () {
-            if (xhttp.readyState === 4 && xhttp.status === 200) {
-                let response = xhttp.responseText
-                let data = JSON.parse(response);
-                if (data.error) {
-                    searchfield.addClass('error');
-                }
-                console.log("data - " + data);
+        let response = fetch(url, {
+            method: "POST",
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'search=' + encodeURIComponent(value),
+        });
 
-                output_options(data);
-            }
+        let data = await response;
+
+        if (data.error) {
+            searchfield.classList.add('error');
+            searchfield.style.border = '1px solid red';
         }
-        xhttp.send(params);
+
+        console.log("data - " + data);
 
         lastsearch = value;
         addselect.style.backgroundImage = 'url("pix/loading.gif") no-repeat center center'
     }
 
     let get_search_text = function () {
-        return searchfield.get('value').toString().replace(/^ +| +$/, '');
+        return searchfield.value.toString().replace(/^ +| +$/, '');
     }
 
     let output_options = function (data) {
@@ -278,7 +276,13 @@ let search_members = function (lastsearch = "") {
         let category = document.createElement('optgroup');
         let count = 0;
         for (let key in users) {
-            let user = users[key];
+
+            let user = {};
+
+            if (users.hasOwnProperty(key)) {
+                user = users[key];
+            }
+
             let option = document.createElement('option');
             option.value = user.id;
             option.innerText = user.name;
