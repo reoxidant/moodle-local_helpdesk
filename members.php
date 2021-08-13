@@ -166,6 +166,7 @@ echo $OUTPUT -> heading(get_string('adduserstocategory', 'local_helpdesk') . ": 
 
 //this must be after calling display() on the selectors so their setup JS executes first
 $PAGE -> requires -> js_init_call('init_add_remove_members_page');
+$PAGE -> requires -> js_init_call('search_members');
 
 echo $OUTPUT -> footer();
 ?>
