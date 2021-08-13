@@ -36,7 +36,6 @@ echo $OUTPUT -> header();
 
 // Check access.
 require_login();
-require_sesskey();
 
 // Get the search parameter.
 $search = required_param('search', PARAM_RAW);
@@ -49,10 +48,9 @@ $members = helpdesk_getresolvers($context);
 
 $ids = [];
 foreach ($members as $member) {
-    $ids += $member->id;
+    $ids[] = $member->id;
 }
-$results = $DB->get_record_sql('SELECT * FROM {user} 
-                                    WHERE id IN (' .implode(',', $ids).") 
-                                    AND CONCAT(firstname, ' ', lastname, ' ', email) LIKE '%$search%')");
+
+$results = $DB->get_record_sql( 'SELECT * FROM {user} WHERE id IN (' .implode(',', $ids). ") AND CONCAT(firstname, lastname, email) LIKE '%$search%'");
 
 echo json_encode(['results' => $results]);
