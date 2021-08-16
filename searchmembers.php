@@ -51,6 +51,6 @@ foreach ($members as $member) {
     $ids[] = $member->id;
 }
 
-$results = $DB->get_record_sql( 'SELECT * FROM {user} WHERE id IN (' .implode(',', $ids). ") AND CONCAT(firstname, lastname, email) LIKE '%$search%'");
+$results[] = $DB->get_record_sql( 'SELECT * FROM {user} WHERE id IN (' .implode(',', $ids). ") AND CONCAT(firstname, lastname, email) LIKE '%$search%'");
 
 echo json_encode(['results' => $results]);
