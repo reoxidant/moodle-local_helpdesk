@@ -205,13 +205,13 @@ let search_members = function (lastsearch = "") {
         }, querydelay * 1000)
     });
 
-    clearbutton.addEventListener('click', function (){
+    clearbutton.addEventListener('click', function () {
         searchfield.value = "";
         clearbutton.disabled = true;
-        send_query(false).then(response => console.error(`ERROR: ${response}`));
+        send_query(false);
     });
 
-    let send_query = async function (forceresearch) {
+    let send_query = function (forceresearch) {
 
         cancel_timeout()
 
@@ -221,25 +221,32 @@ let search_members = function (lastsearch = "") {
             return;
         }
 
+        addselect.style.backgroundImage = 'url("pix/loading.gif")';
+        addselect.style.backgroundPosition = 'center center';
+        addselect.style.backgroundRepeat = 'no-repeat';
+
         let url = '/local/helpdesk/searchmembers.php';
 
-        let response = fetch(url, {
-            method: "POST",
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: 'search=' + encodeURIComponent(value),
-        });
-
-        let data = await response;
-
-        if (data.error) {
-            searchfield.classList.add('error');
-            searchfield.style.border = '1px solid red';
-        }
-
-        console.log("data - " + data);
-
-        lastsearch = value;
-        addselect.style.backgroundImage = 'url("pix/loading.gif") no-repeat center center'
+        fetch(url, {
+                method: "POST",
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: 'search=' + encodeURIComponent(value),
+            }
+        ).then(
+            response => response.json()
+        ).then(
+            data => {
+                lastsearch = value;
+                addselect.style.backgroundImage = '';
+                output_options(data);
+            }
+        ).catch(
+            error => {
+                searchfield.classList.add('error');
+                searchfield.style.border = '1px solid red';
+                console.log('Request failed', error);
+            }
+        );
     }
 
     let get_search_text = function () {
@@ -250,11 +257,11 @@ let search_members = function (lastsearch = "") {
         // Clear out the existing options, keeping any ones that are already selected.
         let selectedusers = {};
         let addselect = document.getElementById('addselect');
+        let optgroup = document.getElementById('addselect').getElementsByTagName('optgroup')[0];
 
         for (let i = 0; i < addselect.options.length; i++) {
 
             let opt = addselect.options[i]
-            opt.remove()
             if (opt.selected) {
                 selectedusers[opt.value] = {
                     id: opt.value,
@@ -262,40 +269,37 @@ let search_members = function (lastsearch = "") {
                     disabled: opt.disabled
                 }
             }
-            opt.options[i].remove();
+            opt.remove();
         }
+        optgroup.remove()
 
-        // Output each option
-        for (let key in data.results) {
-            let categorydata = data.result[key];
-            output_category(categorydata.name, categorydata.users);
-        }
+        output_category(data.results, selectedusers);
     }
 
     let output_category = function (users, selectedusers) {
-        let category = document.createElement('optgroup');
-        let count = 0;
+        let optgroup = document.createElement('optgroup');
+
         for (let key in users) {
 
-            let user = {};
-
             if (users.hasOwnProperty(key)) {
-                user = users[key];
-            }
 
-            let option = document.createElement('option');
-            option.value = user.id;
-            option.innerText = user.name;
-            if (user.disabled) {
-                option.disabled = true;
-            } else if (selectedusers === true || selectedusers[user.id]) {
-                option.selected = true;
-                delete selectedusers[user.id];
-            } else {
-                option.selected = false;
+                let { id, firstname, lastname} = users[key];
+
+                let option = document.createElement('option');
+                option.value = id;
+                option.innerText = firstname + " " + lastname;
+
+                if (selectedusers === true || selectedusers[id]) {
+                    option.selected = true;
+                    delete selectedusers[id];
+                } else {
+                    option.selected = false;
+                }
+
+                optgroup.append(option);
             }
-            category.append(option);
-            count++;
         }
+        let addselect = document.getElementById('addselect');
+        addselect.append(optgroup)
     }
 }
