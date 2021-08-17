@@ -183,12 +183,18 @@ let init_add_remove_members_page = function () {
     })
 }
 
-let search_members = function (lastsearch = "") {
+let search_members = function () {
+    let lastsearch = ""
     let querydelay = 0.5;
     let timeoutid = null;
-    let searchfield = document.getElementById("addselect_searchtext");
-    let clearbutton = document.getElementById("clearbutton");
+
+    let removeselect = document.getElementById("removeselect");
+    let removeselect_searchtext = document.getElementById("removeselect_searchtext");
+    let removeselect_clearbutton = document.getElementById("removeselect_clearbutton");
+
     let addselect = document.getElementById('addselect');
+    let addselect_searchtext = document.getElementById("addselect_searchtext");
+    let addselect_clearbutton = document.getElementById("addselect_clearbutton");
 
     let cancel_timeout = function () {
         if (timeoutid) {
@@ -197,33 +203,58 @@ let search_members = function (lastsearch = "") {
         }
     }
 
-    searchfield.addEventListener('keyup', function () {
+    let get_search_text = function (searchfield) {
+        return searchfield.value.toString().replace(/^ +| +$/, '');
+    }
+
+    removeselect_clearbutton.disabled = get_search_text(removeselect_searchtext) === '';
+    addselect_clearbutton.disabled = get_search_text(addselect_searchtext) === '';
+
+    removeselect_searchtext.addEventListener('keyup', function () {
         // Trigger an ajax search after a delay.
-        cancel_timeout()
+        cancel_timeout();
+        removeselect_clearbutton.disabled = false;
+
         timeoutid = setTimeout(function () {
-            send_query(false)
-        }, querydelay * 1000)
+            send_query(removeselect, removeselect_searchtext);
+        }, querydelay * 1000);
     });
 
-    clearbutton.addEventListener('click', function () {
-        searchfield.value = "";
-        clearbutton.disabled = true;
-        send_query(false);
+    removeselect_clearbutton.addEventListener('click', function () {
+        removeselect_searchtext.value = "";
+        removeselect_clearbutton.disabled = true;
+        send_query(removeselect, removeselect_searchtext);
     });
 
-    let send_query = function (forceresearch) {
+    addselect_searchtext.addEventListener('keyup', function () {
+        // Trigger an ajax search after a delay.
+        cancel_timeout();
+        addselect_clearbutton.disabled = false;
+
+        timeoutid = setTimeout(function () {
+            send_query(addselect, addselect_searchtext);
+        }, querydelay * 1000);
+    });
+
+    addselect_clearbutton.addEventListener('click', function () {
+        addselect_searchtext.value = "";
+        addselect_clearbutton.disabled = true;
+        send_query(addselect, addselect_searchtext);
+    });
+
+    let send_query = function (select, searchfield) {
 
         cancel_timeout()
 
-        let value = get_search_text();
+        let value = get_search_text(searchfield);
         searchfield.className = ''
-        if (lastsearch === value && !forceresearch) {
+        if (lastsearch === value) {
             return;
         }
 
-        addselect.style.backgroundImage = 'url("pix/loading.gif")';
-        addselect.style.backgroundPosition = 'center center';
-        addselect.style.backgroundRepeat = 'no-repeat';
+        select.style.backgroundImage = 'url("pix/loading.gif")';
+        select.style.backgroundPosition = 'center center';
+        select.style.backgroundRepeat = 'no-repeat';
 
         let url = '/local/helpdesk/searchmembers.php';
 
@@ -237,8 +268,8 @@ let search_members = function (lastsearch = "") {
         ).then(
             data => {
                 lastsearch = value;
-                addselect.style.backgroundImage = '';
-                output_options(data);
+                select.style.backgroundImage = '';
+                output_options(select, data);
             }
         ).catch(
             error => {
@@ -249,19 +280,15 @@ let search_members = function (lastsearch = "") {
         );
     }
 
-    let get_search_text = function () {
-        return searchfield.value.toString().replace(/^ +| +$/, '');
-    }
-
-    let output_options = function (data) {
+    let output_options = function (select, data) {
         // Clear out the existing options, keeping any ones that are already selected.
         let selectedusers = {};
-        let addselect = document.getElementById('addselect');
-        let optgroup = document.getElementById('addselect').getElementsByTagName('optgroup')[0];
 
-        for (let i = 0; i < addselect.options.length; i++) {
+        let optgroup = select.getElementsByTagName('optgroup')[0];
 
-            let opt = addselect.options[i]
+        for (let i = 0; i < select.options.length; i++) {
+
+            let opt = select.options[i]
             if (opt.selected) {
                 selectedusers[opt.value] = {
                     id: opt.value,
@@ -273,21 +300,28 @@ let search_members = function (lastsearch = "") {
         }
         optgroup.remove()
 
-        output_category(data.results, selectedusers);
+        output_category(select, data.results, selectedusers);
     }
 
-    let output_category = function (users, selectedusers) {
+    let output_category = function (select, users, selectedusers) {
         let optgroup = document.createElement('optgroup');
-
+        let count = 0;
         for (let key in users) {
-
             if (users.hasOwnProperty(key)) {
 
-                let { id, firstname, lastname} = users[key];
-
                 let option = document.createElement('option');
+
+                if (users[key] === false) {
+                    option.innerText = "Нет пользователей, соответствующих шаблону поиска";
+                    option.disabled = true;
+                    optgroup.append(option);
+                    break;
+                }
+
+                let {id, firstname, lastname, email} = users[key];
+
                 option.value = id;
-                option.innerText = firstname + " " + lastname;
+                option.innerText = firstname + " " + lastname + " (" + email + ")";
 
                 if (selectedusers === true || selectedusers[id]) {
                     option.selected = true;
@@ -295,11 +329,13 @@ let search_members = function (lastsearch = "") {
                 } else {
                     option.selected = false;
                 }
-
-                optgroup.append(option);
+                optgroup.appendChild(option);
+                count++;
             }
         }
-        let addselect = document.getElementById('addselect');
-        addselect.append(optgroup)
+
+        optgroup.label = "Пользователи (" + count + ")"
+
+        select.appendChild(optgroup)
     }
 }
