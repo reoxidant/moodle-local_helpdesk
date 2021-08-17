@@ -100,11 +100,11 @@ echo $OUTPUT -> heading(get_string('adduserstocategory', 'local_helpdesk') . ": 
                                 <?php } ?>
                             </select>
                             <div>
-                                <label for="searchtext">Найти</label>
-                                <input type="text" name="addselect_searchtext" id="searchtext" size="15"
+                                <label for="removeselect_searchtext">Найти</label>
+                                <input type="text" name="removeselect_searchtext" id="removeselect_searchtext" size="15"
                                        value="">
                                 <input class="btn btn-secondary mx-1" type="button" value="Очистить"
-                                       id="addselect_clearbutton">
+                                       id="removeselect_clearbutton">
                             </div>
                         </div>
                         <!-- end display members -->
@@ -146,7 +146,7 @@ echo $OUTPUT -> heading(get_string('adduserstocategory', 'local_helpdesk') . ": 
                                 <input type="text" name="addselect_searchtext" id="addselect_searchtext" size="15"
                                        value="">
                                 <input class="btn btn-secondary mx-1" type="button" value="Очистить"
-                                       id="clearbutton">
+                                       id="addselect_clearbutton">
                             </div>
                         </div>
                         <!-- end display potential membership -->
