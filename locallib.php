@@ -462,3 +462,25 @@ function helpdesk_get_members_category($categoryid): array
 
     return array();
 }
+
+function helpdesk_add_member_category($categoryid, $userid)
+{
+    global $DB;
+
+    $member = new stdClass();
+    $member -> categoryid = $categoryid;
+    $member -> userid = $userid;
+
+    $DB -> insert_record('helpdesk_categories_members', $member);
+}
+
+function helpdesk_remove_member_category($categoryid, $userid)
+{
+    global $DB;
+
+    $member = [];
+    $member['categoryid'] = $categoryid;
+    $member['userid'] = $userid;
+
+    $DB->delete_records('helpdesk_categories_members', $member);
+}
