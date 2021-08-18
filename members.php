@@ -65,7 +65,15 @@ if ($cancel) {
 echo $OUTPUT -> header();
 echo $OUTPUT -> heading(get_string('adduserstocategory', 'local_helpdesk') . ": $categoryname", 3);
 
-// need to fix html
+if(optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
+    $userid = optional_param('addselect', null, PARAM_INT)[0];
+    helpdesk_add_member_category($categoryid, $userid);
+}
+
+if(optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
+    $userid = optional_param('removeselect', null, PARAM_INT)[0];
+    helpdesk_remove_member_category($categoryid, $userid);
+}
 
 ?>
 <div id="addmembersform">
@@ -82,20 +90,25 @@ echo $OUTPUT -> heading(get_string('adduserstocategory', 'local_helpdesk') . ": 
                         <!-- start display members -->
                         <div class="userselector" id="removeselect_wrapper">
                             <select name="removeselect[]" id="removeselect" multiple="multiple" size="20">
-
-                                <?php
-
-                                $categorymembers = helpdesk_get_members_category($categoryid);
-
-                                foreach ($categorymembers as $member) {
-                                    console_log($member);
-                                }
+                                <?php $categorymembers = helpdesk_get_members_category($categoryid);
 
                                 if (empty($categorymembers)) { ?>
 
                                     <optgroup label="Пусто">
                                         <option disabled="disabled">&nbsp;</option>
                                     </optgroup>
+
+                                <?php } else { ?>
+
+                                <optgroup label="Управляющие (<?= count($categorymembers) ?>)">
+
+                                    <?php foreach ($categorymembers as $member) { ?>
+
+                                <q>     </q>
+
+                                    <?php } ?>
+
+                                </optgroup>
 
                                 <?php } ?>
                             </select>
