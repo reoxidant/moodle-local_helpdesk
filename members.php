@@ -66,12 +66,12 @@ echo $OUTPUT -> header();
 echo $OUTPUT -> heading(get_string('adduserstocategory', 'local_helpdesk') . ": $categoryname", 3);
 
 if(optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
-    $userid = optional_param('addselect', null, PARAM_INT)[0];
+    $userid = optional_param_array('addselect', null, PARAM_INT)[0];
     helpdesk_add_member_category($categoryid, $userid);
 }
 
 if(optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
-    $userid = optional_param('removeselect', null, PARAM_INT)[0];
+    $userid = optional_param_array('removeselect', null, PARAM_INT)[0];
     helpdesk_remove_member_category($categoryid, $userid);
 }
 
@@ -91,25 +91,18 @@ if(optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
                         <div class="userselector" id="removeselect_wrapper">
                             <select name="removeselect[]" id="removeselect" multiple="multiple" size="20">
                                 <?php $categorymembers = helpdesk_get_members_category($categoryid);
-
                                 if (empty($categorymembers)) { ?>
-
                                     <optgroup label="Пусто">
                                         <option disabled="disabled">&nbsp;</option>
                                     </optgroup>
-
                                 <?php } else { ?>
-
-                                <optgroup label="Управляющие (<?= count($categorymembers) ?>)">
-
+                                <optgroup label="Управляющий (<?= count($categorymembers) ?>)">
                                     <?php foreach ($categorymembers as $member) { ?>
-
-                                <q>     </q>
-
+                                        <option value="<?= $member->id ?>">
+                                            <?= $member->firstname . ' ' . $member->lastname . ' (' . $member->email . ')' ?>
+                                        </option>
                                     <?php } ?>
-
                                 </optgroup>
-
                                 <?php } ?>
                             </select>
                             <div>
@@ -144,7 +137,14 @@ if(optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
                         <!-- start display potential membership -->
                         <div class="userselector" id="addselect_wrapper">
                             <select name="addselect[]" id="addselect" multiple="multiple" size="20">
-                                <?php $allmembers = helpdesk_getresolvers($context); ?>
+                                <?php
+                                    $resolvers = helpdesk_getresolvers($context);
+                                    $allmembers = array_udiff($resolvers, $categorymembers,
+                                        static function ($first_obj, $second_obj) {
+                                            return $first_obj->id - $second_obj->id;
+                                        }
+                                    );
+                                ?>
                                 <optgroup label="Пользователи (<?= count($allmembers) ?>)">
                                     <?php foreach ($allmembers as $member) { ?>
                                         <option value="<?= $member -> id ?>">
