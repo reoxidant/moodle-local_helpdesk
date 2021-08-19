@@ -452,17 +452,41 @@ function helpdesk_categories_param_action(string $prefix = 'action_')
     return $action;
 }
 
+/**
+ * @param $categoryid
+ * @return array
+ * @throws dml_exception
+ */
 function helpdesk_get_members_category($categoryid): array
 {
     global $DB;
 
-//    SELECT gm.*, e.courseid, g.name AS groupname
-//              FROM {groups_members} gm
-//              JOIN {groups} g ON (g.id = gm.groupid)
+    $allnames = get_all_user_name_fields(true, 'u');
+    $sql = "SELECT u.id, u.email, {$allnames} FROM mdl_helpdesk_categories_members hcm
+    LEFT JOIN mdl_helpdesk_categories hc ON hcm.categoryid = hc.id
+    LEFT JOIN mdl_user u ON hcm.userid = u.id
+    WHERE hc.id = ?
+    ORDER BY u.id ASC";
 
-    return array();
+    $members = $DB -> get_records_sql($sql, [$categoryid]);
+
+    $result = [];
+
+    if ($members) {
+        foreach ($members as $member) {
+            $result[$member->id] = $member;
+        }
+    }
+
+
+    return $result;
 }
 
+/**
+ * @param $categoryid
+ * @param $userid
+ * @throws dml_exception
+ */
 function helpdesk_add_member_category($categoryid, $userid)
 {
     global $DB;
@@ -474,6 +498,11 @@ function helpdesk_add_member_category($categoryid, $userid)
     $DB -> insert_record('helpdesk_categories_members', $member);
 }
 
+/**
+ * @param $categoryid
+ * @param $userid
+ * @throws dml_exception
+ */
 function helpdesk_remove_member_category($categoryid, $userid)
 {
     global $DB;
@@ -482,5 +511,5 @@ function helpdesk_remove_member_category($categoryid, $userid)
     $member['categoryid'] = $categoryid;
     $member['userid'] = $userid;
 
-    $DB->delete_records('helpdesk_categories_members', $member);
+    $DB -> delete_records('helpdesk_categories_members', $member);
 }
