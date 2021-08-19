@@ -170,7 +170,6 @@ let init_add_remove_members_page = function () {
 
     addselect.addEventListener('change', function () {
         add.disabled = false;
-        remove.disabled = true;
     })
 
     let remove = document.getElementById('remove');
@@ -178,7 +177,6 @@ let init_add_remove_members_page = function () {
     remove.disabled = is_selection_empty(removeselect);
 
     removeselect.addEventListener('change', function () {
-        add.disabled = true;
         remove.disabled = false;
     })
 }
