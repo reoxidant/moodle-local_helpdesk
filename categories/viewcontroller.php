@@ -71,11 +71,11 @@ switch ($action) {
             print_error('errorselectsome', 'local_helpdesk', $returnurl);
         }
         $categoryidlist = implode(',', $categoryids);
-        redirect(new moodle_url('/local/helpdesk/views/delete.php', ['categories' => $categoryidlist]));
+        redirect(new moodle_url('/local/helpdesk/delete.php', ['categories' => $categoryidlist]));
         break;
     case 'showcategorysettingsform':
     case 'showcreateorphancategoryform':
-        redirect(new moodle_url('/local/helpdesk/addcategory.php'));
+        redirect(new moodle_url('/local/helpdesk/addcategory.php'), ['id' => $categoryids[0]]);
         break;
     case 'showaddmembersform':
         redirect(new moodle_url('/local/helpdesk/members.php', ['category' => $categoryids[0]]));
