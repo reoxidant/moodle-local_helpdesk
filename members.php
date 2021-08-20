@@ -179,7 +179,7 @@ if(optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
 
 //this must be after calling display() on the selectors so their setup JS executes first
 $PAGE -> requires -> js_init_call('init_add_remove_members_page');
-$PAGE -> requires -> js_init_call('search_members');
+$PAGE -> requires -> js_init_call('search_members', [$categoryid]);
 
 echo $OUTPUT -> footer();
 ?>
