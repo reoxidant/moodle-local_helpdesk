@@ -23,3 +23,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require('../../config.php');
+require_once($CFG -> dirroot . '/local/helpdesk/lib.php');
+require_once($CFG -> dirroot . '/local/helpdesk/locallib.php');
+
+// Get and check parameters
+
+$categoryids = required_param('categories', PARAM_SEQUENCE);
