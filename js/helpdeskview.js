@@ -181,7 +181,7 @@ let init_add_remove_members_page = function () {
     })
 }
 
-let search_members = function () {
+let search_members = function (Y, categoryid) {
     let lastsearch = ""
     let querydelay = 0.5;
     let timeoutid = null;
@@ -256,10 +256,15 @@ let search_members = function () {
 
         let url = '/local/helpdesk/searchmembers.php';
 
+        const params = new URLSearchParams();
+        params.append('search', value);
+        params.append('searchid', select.id)
+        params.append('categoryid', categoryid)
+
         fetch(url, {
                 method: "POST",
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                body: 'search=' + encodeURIComponent(value),
+                body: params.toString()
             }
         ).then(
             response => response.json()

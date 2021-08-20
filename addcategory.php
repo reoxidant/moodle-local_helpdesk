@@ -27,6 +27,17 @@ require('../../config.php');
 require_once($CFG -> dirroot . '/local/helpdesk/locallib.php');
 require_once($CFG -> dirroot . '/local/helpdesk/forms/addcategory_form.php');
 
+// get url variables
+$categoryid = optional_param('categoryid', 0, PARAM_INT);
+$id = optional_param('id', 0, PARAM_INT);
+
+if ($id) {
+    if (!$category = $DB->get_record('categories', ['id' => $id])) {
+        print_error('invalidcategoryid');
+    }
+    if(empty($categoryid)){}
+}
+
 $screen = helpdesk_resolve_screen();
 $view = helpdesk_resolve_view();
 

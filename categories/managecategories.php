@@ -64,8 +64,7 @@ $deletecategory_disabled = count($categoryids) > 0 ? '' : $disabled;
                                     // Print out the HTML
                                     foreach ($categories as $category) {
                                         $select = '';
-//                                        $usercount = $DB->count_records('groups_members', [''])
-                                        $usercount = 0;
+                                        $usercount = $DB->count_records('helpdesk_categories_members', ['categoryid' => $category->id]);
                                         $categoryname = format_string($category -> name) . ' (' . $usercount . ')';
                                         if (in_array($category -> id, $categoryids)) {
                                             $select = ' selected="selected"';
@@ -127,10 +126,9 @@ $deletecategory_disabled = count($categoryids) > 0 ? '' : $disabled;
                                 $atleastonemember = false;
 
                                 if ($singlecategory) {
-                                    $context = context_system ::instance();
-                                    $resolvers = helpdesk_getresolvers($context);
-                                    foreach ($resolvers as $resolver) {
-                                        echo '<option value="' . $resolver -> id . '">' . fullname($resolver, true) . '</option>';
+                                    $categorymembers = helpdesk_get_members_category($categoryids[0]);
+                                    foreach ($categorymembers as $member) {
+                                        echo '<option value="' . $member -> id . '">' . fullname($member, true) . '</option>';
                                         $atleastonemember = true;
                                     }
                                 }
