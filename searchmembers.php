@@ -39,20 +39,33 @@ require_login();
 
 // Get the search parameter.
 $search = required_param('search', PARAM_RAW);
+$searchid = required_param('searchid', PARAM_RAW);
+$categoryid = required_param('categoryid', PARAM_RAW);
 
 // Do the search and output the results.
 
 $context = context_system ::instance();
 
-$members = helpdesk_getresolvers($context);
+$resolvers = helpdesk_getresolvers($context);
+$categorymembers = helpdesk_get_members_category($categoryid);
+
+if ($searchid == 'removeselect') {
+    $members = $categorymembers;
+} else {
+    $members = array_udiff($resolvers, $categorymembers,
+        static function ($first_obj, $second_obj) {
+            return $first_obj -> id - $second_obj -> id;
+        }
+    );
+}
 
 $ids = [];
 foreach ($members as $member) {
-    $ids[] = $member->id;
+    $ids[] = $member -> id;
 }
 $results = [];
 if ($search) {
-    $results[] = $DB->get_record_sql( 'SELECT id, firstname, lastname, email FROM {user} WHERE id IN (' .implode(',', $ids). ") AND CONCAT(firstname, lastname, email) LIKE '%$search%'");
+    $results[] = (empty($ids)) ? false : $DB -> get_record_sql('SELECT id, firstname, lastname, email FROM {user} WHERE id IN (' . implode(',', $ids) . ") AND CONCAT(firstname, lastname, email) LIKE '%$search%'");
 } else {
     $results = $members;
 }
