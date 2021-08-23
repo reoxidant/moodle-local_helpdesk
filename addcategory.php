@@ -29,13 +29,12 @@ require_once($CFG -> dirroot . '/local/helpdesk/forms/addcategory_form.php');
 
 // get url variables
 $categoryid = optional_param('categoryid', 0, PARAM_INT);
-$id = optional_param('id', 0, PARAM_INT);
 
-if ($id) {
-    if (!$category = $DB->get_record('categories', ['id' => $id])) {
-        print_error('invalidcategoryid');
-    }
-    if(empty($categoryid)){}
+$form = new addcategory_form($url);
+
+$category = $DB->get_record('helpdesk_categories', ['id' => $categoryid]);
+if ($category) {
+    $form -> set_data($category);
 }
 
 $screen = helpdesk_resolve_screen();
@@ -50,14 +49,17 @@ $pluginname = get_string('pluginname', 'local_helpdesk');
 
 $url = new moodle_url('/local/helpdesk/addcategory.php');
 
-$PAGE -> set_url($url);
+if ($id !== 0) {
+    $PAGE -> set_url($url, ['id' => $id]);
+} else {
+    $PAGE -> set_url($url);
+}
+
 $PAGE -> set_context($context);
 $PAGE -> set_pagelayout('standard');
 $PAGE -> navbar -> add($pluginname);
 $PAGE -> set_title($pluginname);
 $PAGE -> set_heading($pluginname);
-
-$form = new addcategory_form($url);
 
 if ($form -> is_cancelled()) {
     redirect(new moodle_url('/local/helpdesk/view.php', compact('view', 'screen')));

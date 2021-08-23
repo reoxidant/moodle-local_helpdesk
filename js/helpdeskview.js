@@ -14,7 +14,6 @@ function togglehistory() {
 const helpdesk_categories = {
     init: function (Y, wwwroot) {
         this.membersCategory = new UpdatableMembersCategory(wwwroot)
-
     }
 }
 
@@ -73,9 +72,11 @@ UpdatableMembersCategory.prototype.refreshMembers = function () {
 
     if (selectEl) {
         for (let i = 0; i < selectEl.options.length; i++) {
-            selectionCount++;
-            if (!categoryId) {
-                categoryId = selectEl.options[i].value;
+            if(selectEl.options[i].selected){
+                selectionCount++;
+                if (!categoryId) {
+                    categoryId = selectEl.options[i].value;
+                }
             }
         }
     }
