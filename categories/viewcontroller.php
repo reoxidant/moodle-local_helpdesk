@@ -60,11 +60,18 @@ switch ($action) {
         $roles = [];
         $categorymembers = helpdesk_get_members_category($categoryids[0]);
         if ($categorymembers) {
+            $role = new stdClass();
+            $role -> name = 'Управляющий';
+            $role -> users = [];
             foreach ($categorymembers as $member) {
-                console_log($member);
+                $user = new stdClass();
+                $user->id = $member->id;
+                $user->name = fullname($member, true);
+                $role -> users[] = $user;
             }
+            $roles[] = $role;
         }
-        echo json_encode($categorymembers);
+        echo json_encode($roles);
         die;
     case 'deletecategory':
         if (count($categoryids) == 0) {
@@ -75,7 +82,7 @@ switch ($action) {
         break;
     case 'showcategorysettingsform':
     case 'showcreateorphancategoryform':
-        redirect(new moodle_url('/local/helpdesk/addcategory.php'), ['id' => $categoryids[0]]);
+        redirect(new moodle_url('/local/helpdesk/addcategory.php'), ['categoryid' => $categoryids[0]]);
         break;
     case 'showaddmembersform':
         redirect(new moodle_url('/local/helpdesk/members.php', ['category' => $categoryids[0]]));
