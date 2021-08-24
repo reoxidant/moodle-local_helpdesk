@@ -155,7 +155,7 @@ if (!empty($issues)) {
         if (has_capability('local/helpdesk:manage', $context)) {
             $status = $FULLSTATUSKEYS[0 + $issue -> status] . '<br/>' .
                 html_writer ::select($STATUSKEYS,
-                    "status{$issue->id}", 0, [],
+                    "status{$issue->id}", 0, ['' => 'choose'],
                     ['onchange' => "document.forms['manageform'].schanged{$issue->id}.value = 1;"]
                 ) . "<input type=\"hidden\" name=\"schanged{$issue->id}\" value=\"0\" />";
             $managers = helpdesk_getmanagers($context);
