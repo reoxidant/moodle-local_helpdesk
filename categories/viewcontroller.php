@@ -82,7 +82,11 @@ switch ($action) {
         break;
     case 'showcategorysettingsform':
     case 'showcreateorphancategoryform':
-        redirect(new moodle_url('/local/helpdesk/addcategory.php'), ['categoryid' => $categoryids[0]]);
+        if(!empty($categoryids)){
+            redirect(new moodle_url('/local/helpdesk/addcategory.php', ['categoryid' => $categoryids[0]]));
+        } else {
+            redirect(new moodle_url('/local/helpdesk/addcategory.php'));
+        }
         break;
     case 'showaddmembersform':
         redirect(new moodle_url('/local/helpdesk/members.php', ['category' => $categoryids[0]]));
