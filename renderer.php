@@ -216,6 +216,9 @@ class local_helpdesk_renderer extends plugin_renderer_base
     {
         global $DB, $OUTPUT, $STATUSCODES, $STATUSKEYS;
 
+        $ownerinfo = '';
+        $stateinfo = '';
+
         if (!empty($history)) {
             foreach ($history as $owner) {
                 $user = $DB -> get_record('user', ['id' => $owner -> userid]);
@@ -238,6 +241,8 @@ class local_helpdesk_renderer extends plugin_renderer_base
         if (!empty($statehistory)) {
             foreach ($statehistory as $state) {
                 $bywhom = $DB -> get_record('user', ['id' => $state -> userid]);
+                $statusfrom = $STATUSCODES[(int)$state -> statusfrom] ?? $STATUSCODES[1];
+                $statusto = $STATUSCODES[(int)$state -> statusto] ?? $STATUSCODES[1];
 
                 $stateinfo .= '<tr style="vertical-align: top">
                         <td style="text-align: left">
@@ -247,13 +252,13 @@ class local_helpdesk_renderer extends plugin_renderer_base
                             ' . $this -> user($bywhom) . '
                         </td>
                         <td style="text-align: left">
-                            <span class="status_' . $STATUSCODES[$state -> statusfrom] . '">
-                                ' . $STATUSKEYS[$state -> statusform] . '
+                            <span class="status_' . $statusfrom . '">
+                                ' . $statusfrom . '
                             </span>
                         </td>
                         <td style="text-align: left">
-                            <span class="status_' . $STATUSCODES[$state -> statusto] . '">
-                                ' . $STATUSKEYS[$state -> statusto] . '
+                            <span class="status_' . $statusto . '">
+                                ' . $statusto . '
                             </span>
                         </td>
                     </tr>';
