@@ -271,7 +271,7 @@ function helpdesk_print_direct_editor($attributes, $values, &$options): string
         $args -> env = 'filepicker';
 
         // advimage plugin
-        $image_options = initialise_filepicker((array)$args);
+        $image_options = initialise_filepicker($args);
         $image_options -> context = $ctx;
         $image_options -> client_id = uniqid();
         $image_options -> maxbytes = @$options['maxbytes'];
@@ -281,7 +281,7 @@ function helpdesk_print_direct_editor($attributes, $values, &$options): string
 
         //moodlemedia plugin
         $args -> accepted_types = ['video', 'audio'];
-        $media_options = initialise_filepicker((array)$args);
+        $media_options = initialise_filepicker($args);
         $media_options -> context = $ctx;
         $media_options -> client_id = uniqid();
         $media_options -> maxbytes = @$options['maxbytes'];
@@ -291,7 +291,7 @@ function helpdesk_print_direct_editor($attributes, $values, &$options): string
 
         //advlink plugin
         $args -> accepted_types = '*';
-        $link_options = initialise_filepicker((array)$args);
+        $link_options = initialise_filepicker($args);
         $link_options -> context = $ctx;
         $link_options -> client_id = uniqid();
         $link_options -> maxbytes = @$options['maxbytes'];
@@ -372,53 +372,6 @@ function helpdesk_print_direct_editor($attributes, $values, &$options): string
 function helpdesk_get_all_categories(): array
 {
     global $CFG, $DB;
-
-    /*
-    create table issue_category (id int, categoryname text);
-      insert into issue_category values
-       (1, 'Академическая задолженность')
-      ,(2, 'Выдача документов')
-      ,(3, 'Запрос документа');
-
-
-    create table users (id int, username text);
-        insert into users values
-        (1, 'Админ')
-       ,(2, 'Студент')
-       ,(3, 'Учитель');
-
-    create table issue_category_users (categoryid int, userid int);
-        insert into issue_category_users values
-        (1, 1)
-        ,(1, 2)
-        ,(1, 3)
-        ,(2, 1)
-        ,(2, 3)
-        ,(3, 2);
-    */
-
-    /*
-    select ic.*, group_concat(u.username)
-     from issue_category as ic
-    join issue_category_users as icu
-     on icu.categoryid = ic.id
-    join users as u
-     on u.id = icu.userid
-    group by ic.id;
-    */
-
-    /*$sql = '
-       SELECT
-          ic.id, group_concat(ic.name)
-       FROM
-          {helpdesk_usercategory} ic
-       LEFT JOIN
-          {user} u
-       ON
-          ic.userid = u.id
-       GROUP BY
-          ic.id';
-    */
 
     return $DB -> get_records_sql('SELECT * FROM {helpdesk_categories} ORDER BY id ASC');
 }
@@ -512,4 +465,23 @@ function helpdesk_remove_member_category($categoryid, $userid)
     $member['userid'] = $userid;
 
     $DB -> delete_records('helpdesk_categories_members', $member);
+}
+
+function helpdesk_delete_category($categoryid): bool
+{
+    global $CFG, $DB;
+
+    $category = $DB->get_record('helpdesk_categories', ['id' => $categoryid]);
+
+    if(!$category){
+        //silently ignore attempts to delete missing already deleted categories ;-)
+        return true;
+    }
+
+    //delete members
+    $DB->delete_records('helpdesk_categories_members', ['categoryid'=>$categoryid]);
+    //category itself last
+    $DB->delete_records('helpdesk_categories', ['id'=>$categoryid]);
+
+    return true;
 }
