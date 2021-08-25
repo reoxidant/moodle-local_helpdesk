@@ -33,9 +33,8 @@ $categoryid = optional_param('categoryid', 0, PARAM_INT);
 $screen = helpdesk_resolve_screen();
 $view = helpdesk_resolve_view();
 
-$context = context_system ::instance();
-
 require_login();
+$context = context_system ::instance();
 require_capability('local/helpdesk:manage', $context);
 
 $pluginname = get_string('pluginname', 'local_helpdesk');
