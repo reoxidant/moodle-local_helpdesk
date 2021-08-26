@@ -123,16 +123,16 @@ function xmldb_local_helpdesk_upgrade($oldversion = 0): bool
         $table = new xmldb_table('helpdesk_categories');
 
         // Adding fields to table helpdesk_categories.
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('name', XMLDB_TYPE_CHAR, '254', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('description', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table -> add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table -> add_field('name', XMLDB_TYPE_CHAR, '254', null, XMLDB_NOTNULL, null, null);
+        $table -> add_field('description', XMLDB_TYPE_TEXT, null, null, null, null, null);
 
         // Adding keys to table helpdesk_categories.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table -> add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Conditionally launch create table for helpdesk_categories.
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
+        if (!$dbman -> table_exists($table)) {
+            $dbman -> create_table($table);
         }
 
         // Helpdesk savepoint reached.
@@ -145,16 +145,16 @@ function xmldb_local_helpdesk_upgrade($oldversion = 0): bool
         $table = new xmldb_table('helpdesk_categories_members');
 
         // Adding fields to table helpdesk_categories_members.
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('categoryid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0');
+        $table -> add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table -> add_field('categoryid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0');
+        $table -> add_field('userid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0');
 
         // Adding keys to table helpdesk_categories_members.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table -> add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Conditionally launch create table for helpdesk_categories_members.
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
+        if (!$dbman -> table_exists($table)) {
+            $dbman -> create_table($table);
         }
 
         // Helpdesk savepoint reached.
