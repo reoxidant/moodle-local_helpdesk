@@ -79,13 +79,16 @@ $issue = file_prepare_standard_editor($issue, 'resolution', $editoroptions, $con
                 <td style="width:28%">
                     <?php $categories = helpdesk_get_all_categories() ?>
                     <label>
-                        <select name="categories[]" multiple="multiple" size="5">
+                        <select name="categories[]" multiple="multiple" id="categories" size="5"
+                                onchange="helpdesk_categories.membersCategory.refreshMembers()">
                             <?php
+
                             foreach ($categories as $category) {
-                                $selected = ($category -> selected) ? 'selected="selected"' : '';
+                                $selected = ($issue -> categoryid == $category -> id) ? 'selected="selected"' : '';
+
                                 echo
-                                    '<option value="' . $dependacy -> id . ' " ' . $selected . ' > ' . $category -> id . ' - ' .
-                                    shorten_text(format_string($category -> summary)) .
+                                    '<option value="' . $category -> id . '" ' . $selected . ' > ' .
+                                    shorten_text(format_string($category -> name)) .
                                     '</option>\n';
                             }
                             ?>
@@ -113,18 +116,20 @@ $issue = file_prepare_standard_editor($issue, 'resolution', $editoroptions, $con
                 <td style="text-align: right; width: 25%" class="helpdesk-issue-param">
                     <b><?php print_string('assignedto', 'local_helpdesk') ?>:</b><br/>
                 </td>
-                <td style="width: 25%;">
+                <td style="width: 25%;" id="memberslabel">
                     <?php
-                    $resolvers = helpdesk_getresolvers($context);
-                    if ($resolvers) {
-                        foreach ($resolvers as $resolver) {
-                            $resolversmenu[$resolver -> id] = fullname($resolver);
-                        }
-                        echo html_writer ::select($resolversmenu, 'assignedto', @$issue -> assignedto);
+
+                    if ($issue -> assignedto) {
+                        $user = $DB -> get_record('user', array('id' => $issue -> assignedto));
+                        $assignedto[0] = 'Выберите...';
+                        $assignedto[$user -> id] = fullname($user);
+
+                        echo html_writer ::select((array)$assignedto, 'assignedto', $user -> id, null);
+//                        echo '<input type="hidden" id="oldmember" name="assignedto" value="'.$issue -> assignedto.'" />';
                     } else {
-                        print_string('noresolvers', 'local_helpdesk');
-                        echo '<input type="hidden" name="assignedto" value="0" />';
+                        echo html_writer ::select(['Нет назначенных пользователей'], 'assignedto', 0);
                     }
+
                     ?>
                 </td>
                 <td style="text-align: right; width: 22%" class="helpdesk-issue-param">
@@ -190,5 +195,7 @@ $issue = file_prepare_standard_editor($issue, 'resolution', $editoroptions, $con
 
     <?php
     $OUTPUT -> box_end();
+
+    $PAGE -> requires -> js_init_call('helpdesk_categories.init', [$CFG -> wwwroot]);
     ?>
 </div>
