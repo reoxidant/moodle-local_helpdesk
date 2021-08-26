@@ -27,7 +27,7 @@ function UpdatableMembersCategory(wwwRoot) {
     this.connectCallback = {
         success: function (t, o) {
             if (o.responseText !== undefined) {
-                let selectEl = document.getElementById("members");
+                let selectEl = document.getElementById("members") ? document.getElementById("members") : document.getElementById("menuassignedto");
                 if (selectEl && o.responseText) {
                     let roles = eval("(" + o.responseText + ")");
 
@@ -36,6 +36,12 @@ function UpdatableMembersCategory(wwwRoot) {
                         while (selectEl.firstChild) {
                             selectEl.removeChild(selectEl.firstChild)
                         }
+                    }
+
+                    if(roles.length === 0){
+                        let optionEl = document.createElement("option");
+                        optionEl.innerHTML = "Нет назначенных пользователей";
+                        selectEl.appendChild(optionEl);
                     }
 
                     // Populate the members list box.
@@ -91,23 +97,32 @@ UpdatableMembersCategory.prototype.refreshMembers = function () {
 
     let spanEl = document.getElementById('thecategory');
 
-    if (singleSelection) {
-        spanEl.innerHTML = selectEl.options[selectEl.selectedIndex].title;
-    } else {
-        spanEl.innerHTML = '&nbsp;';
+    if(spanEl){
+        if (singleSelection) {
+            spanEl.innerHTML = selectEl.options[selectEl.selectedIndex].title;
+        } else {
+            spanEl.innerHTML = '&nbsp;';
+        }
     }
 
     // Clear the members list box.
-    selectEl = document.getElementById('members');
+
+    selectEl = document.getElementById('members') ? document.getElementById('members') : document.getElementById('menuassignedto');
     if (selectEl) {
         while (selectEl.firstChild) {
             selectEl.removeChild(selectEl.firstChild)
         }
     }
 
-    document.getElementById('showaddmembersform').disabled = !singleSelection;
-    document.getElementById('showeditcategorysettingsform').disabled = !singleSelection;
-    document.getElementById('deletecategory').disabled = selectionCount === 0;
+    let showaddmembersform = document.getElementById('showaddmembersform');
+    let showeditcategorysettingsform = document.getElementById('showeditcategorysettingsform');
+    let deletecategory = document.getElementById('deletecategory');
+
+    if(showaddmembersform && showeditcategorysettingsform && deletecategory){
+        showaddmembersform.disabled = !singleSelection;
+        showeditcategorysettingsform.disabled = !singleSelection;
+        deletecategory.disabled = selectionCount === 0;
+    }
 
     if (singleSelection) {
 
