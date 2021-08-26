@@ -20,6 +20,10 @@ $view = helpdesk_resolve_view();
 
 $url = new moodle_url('/local/helpdesk/view.php', compact('view', 'screen'));
 
+if ($view === 'categories' || $screen === 'editanissue') {
+    include($CFG -> dirroot . '/local/helpdesk/categories/viewcontroller.php');
+}
+
 // Redirect
 
 if ($view === 'view' && (empty($screen) || $screen === 'viewanissue' || $screen === 'editanissue') && empty($issueid)) {
@@ -40,10 +44,6 @@ if ($issueid) {
 if (!isloggedin() || isguestuser()) {
     require_login();
     die;
-}
-
-if ($view === 'categories') {
-    include($CFG -> dirroot . '/local/helpdesk/categories/viewcontroller.php');
 }
 
 $context = context_system ::instance();
