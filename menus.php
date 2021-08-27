@@ -66,6 +66,9 @@ switch ($view) {
         if (has_capability('local/helpdesk:viewallissues', $context)) {
             $rows[1][] = new tabobject('browse', 'view.php?view=view&amp;screen=browse', get_string('browse', 'local_helpdesk'));
         }
+        if (has_capability('local/helpdesk:viewallissues', $context)) {
+            $rows[1][] = new tabobject('search', 'view.php?view=view&amp;screen=search', get_string('search', 'local_helpdesk'));
+        }
         break;
     case 'resolved' :
         if (!preg_match('/tickets|browse/', $screen)) {
