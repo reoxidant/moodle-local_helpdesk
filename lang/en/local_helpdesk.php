@@ -61,6 +61,10 @@ $string['backtocategories'] = 'Назад к категориям';
 $string['categorymembers'] = 'Участники категории';
 $string['potentialmembers'] = 'Возможные участники';
 $string['deletecategoryconfirm'] = 'Вы уверены, что хотите удалить категорию \'{$a}\'?';
+$string['searchbyid'] = 'Поиск по ID';
+$string['search'] = 'Поиск';
+$string['searchcriteria'] = 'Критерии поиска';
+$string['any'] = 'Все';
 
 $string['errorcannotwritecomment'] = 'Ошибка записи комментария';
 $string['errornoaccessissue'] = 'У Вас нет доступа для просмотра этой заявки';

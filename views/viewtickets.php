@@ -14,6 +14,15 @@ global $CFG, $DB, $STATUSKEYS, $FULLSTATUSKEYS;
 
 require_once($CFG -> libdir . '/tablelib.php');
 
+// get search engine related information
+// fields can come from a stored query,or from the current query in the user's client environement cookie
+if (!isset($fields)) {
+    $fields = helpdesk_extractsearchcookies();
+}
+if (!empty($fields)) {
+    $searchqueries = helpdesk_constructsearchqueries($fields);
+}
+
 $limit = 20;
 $page = optional_param('page', 1, PARAM_INT);
 
