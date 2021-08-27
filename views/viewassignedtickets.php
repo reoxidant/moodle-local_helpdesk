@@ -158,24 +158,29 @@ if (!empty($issues)) {
                     "status{$issue->id}", 0, ['' => 'choose'],
                     ['onchange' => "document.forms['manageform'].schanged{$issue->id}.value = 1;"]
                 ) . "<input type=\"hidden\" name=\"schanged{$issue->id}\" value=\"0\" />";
-            $managers = helpdesk_getmanagers($context);
+//            $managers = helpdesk_getmanagers($context);
+//
+//            if (!empty($managers)) {
+//                $managersmenu = [];
+//                foreach ($managers as $manager) {
+//                    $managersmenu[$manager -> id] = fullname($manager);
+//                }
+//                $assignedto =
+//                    html_writer ::select($managersmenu,
+//                        "assignedto{$issue->id}", $issue -> assignedto,
+//                        ['' => get_string('unassigned', 'local_helpdesk')],
+//                        ['onchange' => "document.forms['manageform'].changed{$issue->id}.value = 1;"]
+//                    );
+//            }
 
-            if (!empty($managers)) {
-                $managersmenu = [];
-                foreach ($managers as $manager) {
-                    $managersmenu[$manager -> id] = fullname($manager);
-                }
-                $assignedto =
-                    html_writer ::select($managersmenu,
-                        "assignedto{$issue->id}", $issue -> assignedto,
-                        ['' => get_string('unassigned', 'local_helpdesk')],
-                        ['onchange' => "document.forms['manageform'].changed{$issue->id}.value = 1;"]
-                    );
-            }
+//            $assignedto = fullname($user);
         } else {
             $status = $FULLSTATUSKEYS[0 + $issue -> status];
-            $assignedto = fullname($user);
+//            $assignedto = fullname($user);
         }
+
+        $assignedto = fullname($user);
+
         $status =
             '<div class="status_' . $STATUSCODES[$issue -> status] . '" 
                   style="width: 100%; height: 100%; text-align:center">'
