@@ -427,7 +427,7 @@ function helpdesk_get_members_category($categoryid): array
 
     if ($members) {
         foreach ($members as $member) {
-            $result[$member->id] = $member;
+            $result[$member -> id] = $member;
         }
     }
 
@@ -471,17 +471,340 @@ function helpdesk_delete_category($categoryid): bool
 {
     global $CFG, $DB;
 
-    $category = $DB->get_record('helpdesk_categories', ['id' => $categoryid]);
+    $category = $DB -> get_record('helpdesk_categories', ['id' => $categoryid]);
 
-    if(!$category){
+    if (!$category) {
         //silently ignore attempts to delete missing already deleted categories ;-)
         return true;
     }
 
     //delete members
-    $DB->delete_records('helpdesk_categories_members', ['categoryid'=>$categoryid]);
+    $DB -> delete_records('helpdesk_categories_members', ['categoryid' => $categoryid]);
     //category itself last
-    $DB->delete_records('helpdesk_categories', ['id'=>$categoryid]);
+    $DB -> delete_records('helpdesk_categories', ['id' => $categoryid]);
 
     return true;
+}
+
+function helpdesk_getassignees(): array
+{
+    global $CFG, $DB;
+
+    $allnames = get_all_user_name_fields(true, 'u');
+
+    $sql = "
+        SELECT DISTINCT
+            u.id,
+            {$allnames},
+            u.picture,
+            u.email,
+            u.emailstop,
+            u.maildisplay,
+            u.imagealt,
+            COUNT(i.id) as issues
+        FROM
+            {helpdesk_issue} i,
+            {user} u
+        WHERE
+            i.assignedto = u.id
+        GROUP BY
+            u.id,
+            u.firstname,
+            u.lastname,
+            u.picture,
+            u.email,
+            u.emailstop,
+            u.maildisplay,
+            u.imagealt
+    ";
+
+
+//    WHERE
+//            i.assignedto = u.id AND
+//            i.bywhomid = ?
+
+    return $DB -> get_records_sql($sql);
+}
+
+function helpdesk_searchforissues(){
+    global $CFG;
+
+    helpdesk_clearsearchcookies();
+    $fields = helpdesk_extractsearchparametersfrompost();
+    $success = helpdesk_setsearchcookies($fields);
+
+    if ($success) {
+        if ($tracker->supportmode == 'bugtracker') {
+            redirect (new moodle_url('/mod/tracker/view.php', array('id' => $cmid, 'view' => 'view', 'screen' => 'browse')));
+        } else {
+            redirect(new moodle_url('/mod/tracker/view.php', array('id' => $cmid, 'view' => 'view', 'screen' => 'mytickets')));
+        }
+    } else {
+        print_error('errorcookie', 'helpdesk');
+    }
+}
+
+function helpdesk_clearsearchcookies(): bool
+{
+    $success = true;
+    $keys = array_keys($_COOKIE); // get the key value of all the cookies
+    $cookiekeys = preg_grep('/moodle_helpdesk_search./' , $keys); // filter all search cookies
+
+    foreach ($cookiekeys as $cookiekey) {
+        $result = setcookie($cookiekey, '');
+        $success = $success && $result;
+    }
+
+    return $success;
+}
+
+
+function helpdesk_extractsearchparametersfrompost(): array
+{
+    $count = 0;
+    $fields = array();
+    $issuenumber = optional_param('issueid', '', PARAM_INT);
+    if (!empty ($issuenumber)) {
+        $issuenumberarray = explode(',', $issuenumber);
+        foreach ($issuenumberarray as $issueid) {
+            if (is_numeric($issueid)) {
+                $fields['id'][] = $issueid;
+            } else {
+                print_error('errorbadlistformat', 'helpdesk');
+            }
+        }
+    } else {
+        $checkdate = optional_param('checkdate', 0, PARAM_INT);
+        if ($checkdate) {
+            $month = optional_param('month', '', PARAM_INT);
+            $day = optional_param('day', '', PARAM_INT);
+            $year = optional_param('year', '', PARAM_INT);
+
+            if (!empty($month) && !empty($day) && !empty($year)) {
+                $datereported = make_timestamp($year, $month, $day);
+                $fields['datereported'][] = $datereported;
+            }
+        }
+
+        $description = optional_param('description', '', PARAM_CLEANHTML);
+        if (!empty($description)) {
+            $fields['description'][] = stripslashes($description);
+        }
+
+        $reportedby = optional_param('reportedby', '', PARAM_INT);
+        if (!empty($reportedby)) {
+            $fields['reportedby'][] = $reportedby;
+        }
+
+        $assignedto = optional_param('assignedto', '', PARAM_INT);
+        if (!empty($assignedto)) {
+            $fields['assignedto'][] = $assignedto;
+        }
+
+        $summary = optional_param('summary', '', PARAM_TEXT);
+        if (!empty($summary)) {
+            $fields['summary'][] = $summary;
+        }
+
+        $keys = array_keys($_POST);                         // get the key value of all the fields submitted
+        $elementkeys = preg_grep('/element./' , $keys);     // filter out only the element keys
+
+        foreach ($elementkeys as $elementkey) {
+            preg_match('/element(.*)$/', $elementkey, $elementid);
+            if (!empty($_POST[$elementkey])) {
+                if (is_array($_POST[$elementkey])) {
+                    foreach ($_POST[$elementkey] as $elementvalue) {
+                        $fields[$elementid[1]][] = $elementvalue;
+                    }
+                } else {
+                    $fields[$elementid[1]][] = $_POST[$elementkey];
+                }
+            }
+        }
+    }
+    return $fields;
+}
+
+function helpdesk_setsearchcookies($fields){
+    $success = true;
+    if (is_array($fields)) {
+        $keys = array_keys($fields);
+
+        foreach ($keys as $key) {
+            $cookie = '';
+            foreach ($fields[$key] as $value) {
+                if (empty($cookie)) {
+                    $cookie .= $value;
+                } else {
+                    $cookie .= ', ' . $value;
+                }
+            }
+
+            $result = setcookie('moodle_helpdesk_search_' . $key, $cookie);
+            $success = $success && $result;
+        }
+    } else {
+        $success = false;
+    }
+    return $success;
+}
+
+function helpdesk_extractsearchcookies(): array
+{
+    $keys = array_keys($_COOKIE);                                           // get the key value of all the cookies
+    $cookiekeys = preg_grep('/moodle_helpdesk_search./' , $keys);            // filter all search cookies
+    $fields = null;
+    foreach ($cookiekeys as $cookiekey) {
+        preg_match('/moodle_helpdesk_search_(.*)$/', $cookiekey, $fieldname);
+        $fields[$fieldname[1]] = explode(', ', $_COOKIE[$cookiekey]);
+    }
+    return $fields;
+}
+
+function helpdesk_constructsearchqueries($fields, $own = false): StdClass
+{
+    global $CFG, $USER, $DB;
+
+    $keys = array_keys($fields);
+
+    // Check to see if we are search using elements as a parameter.
+    // If so, we need to include the table tracker_issueattribute in the search query.
+    $elementssearch = false;
+    foreach ($keys as $key) {
+        if (is_numeric($key)) {
+            $elementssearch = true;
+        }
+    }
+    $elementsSearchClause = ($elementssearch) ? " {tracker_issueattribute} AS ia, " : '' ;
+
+    $elementsSearchConstraint = '';
+    foreach ($keys as $key) {
+        if ($key == 'id') {
+            $elementsSearchConstraint .= ' AND  (';
+            foreach ($fields[$key] as $idtoken) {
+                $elementsSearchConstraint .= (empty($idquery)) ? 'i.id =' . $idtoken : ' OR i.id = ' . $idtoken ;
+            }
+            $elementsSearchConstraint .= ')';
+        }
+
+        if ($key == 'datereported' && array_key_exists('checkdate', $fields) ) {
+            $datebegin = $fields[$key][0];
+            $dateend = $datebegin + 86400;
+            $elementsSearchConstraint .= " AND i.datereported > {$datebegin} AND i.datereported < {$dateend} ";
+        }
+
+        if ($key == 'description') {
+            $tokens = explode(' ', $fields[$key][0], ' ');
+            foreach ($tokens as $token) {
+                $elementsSearchConstraint .= " AND i.description LIKE '%{$descriptiontoken}%' ";
+            }
+        }
+
+        if ($key == 'reportedby') {
+            $elementsSearchConstraint .= ' AND i.reportedby = ' . $fields[$key][0];
+        }
+
+        if ($key == 'assignedto') {
+            $elementsSearchConstraint .= ' AND i.assignedto = ' . $fields[$key][0];
+        }
+
+        if ($key == 'summary') {
+            $summarytokens = explode(' ', $fields[$key][0]);
+            foreach ($summarytokens as $summarytoken) {
+                $elementsSearchConstraint .= " AND i.summary LIKE '%{$summarytoken}%'";
+            }
+        }
+
+        if (is_numeric($key)) {
+            foreach ($fields[$key] as $value) {
+                $elementsSearchConstraint .= ' AND i.id IN (SELECT issue FROM {tracker_issueattribute} WHERE elementdefinition=' . $key . ' AND elementitemid=' . $value . ')';
+            }
+        }
+    }
+    if ($own == false) {
+        $sql = new StdClass();
+        $sql->search = "
+            SELECT DISTINCT
+                i.id,
+                i.trackerid,
+                i.summary,
+                i.datereported,
+                i.reportedby,
+                i.assignedto,
+                i.resolutionpriority,
+                i.status,
+                COUNT(cc.userid) AS watches,
+                u.firstname,
+                u.lastname
+            FROM
+                {user} AS u,
+                $elementsSearchClause
+                {tracker_issue} i
+            LEFT JOIN
+                {tracker_issuecc} cc
+            ON
+                cc.issueid = i.id
+            WHERE
+                i.trackerid = {$trackerid} AND
+                i.reportedby = u.id $elementsSearchConstraint
+            GROUP BY
+                i.id,
+                i.trackerid,
+                i.summary,
+                i.datereported,
+                i.reportedby,
+                i.assignedto,
+                i.status,
+                u.firstname,
+                u.lastname
+        ";
+        $sql->count = "
+            SELECT COUNT(DISTINCT
+                (i.id)) as reccount
+            FROM
+                {tracker_issue} i
+                $elementsSearchClause
+            WHERE
+                i.trackerid = {$trackerid}
+                $elementsSearchConstraint
+        ";
+    } else {
+        $sql->search = "
+            SELECT DISTINCT
+                i.id,
+                i.trackerid,
+                i.summary,
+                i.datereported,
+                i.reportedby,
+                i.resolutionpriority,
+                i.assignedto,
+                i.status,
+                COUNT(cc.userid) AS watches
+            FROM
+                $elementsSearchClause
+                {tracker_issue} i
+            LEFT JOIN
+                {tracker_issuecc} cc
+            ON
+                cc.issueid = i.id
+            WHERE
+                i.trackerid = {$trackerid} AND
+                i.reportedby = {$USER->id}
+                $elementsSearchConstraint
+            GROUP BY
+                i.id, i.trackerid, i.summary, i.datereported, i.reportedby, i.assignedto, i.status
+        ";
+        $sql->count = "
+            SELECT COUNT(DISTINCT
+                (i.id)) as reccount
+            FROM
+                {tracker_issue} i
+                $elementsSearchClause
+            WHERE
+                i.trackerid = {$trackerid} AND
+                i.reportedby = $USER->id
+                $elementsSearchConstraint
+        ";
+    }
+    return $sql;
 }
