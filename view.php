@@ -48,6 +48,15 @@ if (!isloggedin() || isguestuser()) {
 
 $context = context_system ::instance();
 
+if($action == 'searchforissues') {
+    $search = optional_param('search', null, PARAM_CLEANHTML);
+
+    //Search for issues.
+    if(!empty($search)){
+
+    }
+}
+
 $pluginname = get_string('pluginname', 'local_helpdesk');
 
 $PAGE -> set_context($context);
@@ -78,6 +87,13 @@ if ($view === 'view') {
             case 'tickets':
                 $resolved = 0;
                 include($CFG -> dirroot . '/local/helpdesk/views/viewassignedtickets.php');
+                break;
+            case 'search':
+                if (has_any_capability(['local/helpdesk:seeissues', 'local/helpdesk:resolve', 'local/helpdesk:manage'], $context)) {
+                    include($CFG -> dirroot . '/local/helpdesk/views/searchform.php');
+                } else {
+                    print_error('errornoaccessissue', 'local_helpdesk');
+                }
                 break;
             case 'viewanissue':
                 if (has_any_capability(['local/helpdesk:seeissues', 'local/helpdesk:resolve', 'local/helpdesk:manage'], $context)) {
